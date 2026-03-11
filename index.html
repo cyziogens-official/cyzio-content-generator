@@ -18,9 +18,6 @@
         .dev-badge { display: inline-block; margin-top: 8px; font-size: 9px; padding: 4px 8px; background: #111; border: 1px solid #222; border-radius: 4px; color: var(--text-dim); letter-spacing: 1px; }
         .form-area { flex: 1; overflow-y: auto; padding: 25px; display: flex; flex-direction: column; gap: 20px; }
         .sec-title { font-size: 10px; font-weight: 800; color: var(--primary); letter-spacing: 1.5px; margin-bottom: 10px; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 5px; }
-        .upload-card { width: 100%; height: 110px; border: 1px dashed #333; border-radius: 12px; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; position: relative; overflow: hidden; transition: 0.3s; }
-        .upload-card:hover { border-color: var(--primary); background: rgba(255,107,0,0.05); }
-        .preview-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.6; display: none; }
         .input-box { width: 100%; background: #000; border: 1px solid #222; border-radius: 10px; padding: 12px 15px; color: #fff; font-size: 13px; outline: none; transition: 0.3s; }
         .input-box:focus { border-color: var(--primary); }
         textarea.input-box { resize: none; height: 70px; }
@@ -40,6 +37,12 @@
         .photo-item { background: #000; border-radius: 15px; overflow: hidden; border: 1px solid #222; position: relative; }
         .photo-item img { width: 100%; height: 400px; object-fit: cover; }
         .photo-item .meta { position: absolute; bottom: 0; width: 100%; padding: 15px; background: linear-gradient(0deg, #000, transparent); font-size: 10px; font-weight: 800; color: #fff; text-align: center; letter-spacing: 1px; }
+
+        /* KOTAK UPLOAD ANTI ZONK */
+        .box-upload-asli { position: relative; width: 100%; height: 110px; border: 1px dashed #333; border-radius: 12px; background: #000; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .box-upload-asli input[type="file"] { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 20; }
+        .box-upload-asli img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.6; display: none; z-index: 5; }
+        .box-upload-asli .teks { color: var(--text-dim); font-size: 11px; font-weight: 600; z-index: 10; }
     </style>
 </head>
 <body>
@@ -53,10 +56,10 @@
         <div class="form-area">
             <div>
                 <div class="sec-title">01. PRODUCT DATA</div>
-                <div class="upload-card" onclick="document.getElementById('fProd').click()">
-                    <input type="file" id="fProd" accept="image/*" style="display:none;">
-                    <div id="txtProd" style="text-align:center; color:var(--text-dim); font-size:11px; font-weight:600;">📷 Klik Upload Foto Produk</div>
-                    <img id="imgProd" class="preview-img">
+                <div class="box-upload-asli">
+                    <input type="file" accept="image/*" onchange="bacaFotoAman(this, 'imgProd', 'txtProd', 'dataProd')">
+                    <div id="txtProd" class="teks">📷 Klik Upload Foto Produk</div>
+                    <img id="imgProd">
                 </div>
                 <input type="hidden" id="dataProd" data-mime="image/jpeg">
                 <textarea id="dInput" class="input-box" style="margin-top:10px;" placeholder="Detail/Keunggulan produk..."></textarea>
@@ -74,10 +77,10 @@
                     </div>
                 </div>
                 
-                <div class="upload-card" id="cardModel" style="display:none; margin-bottom:10px; border-color:var(--primary);" onclick="document.getElementById('fModel').click()">
-                    <input type="file" id="fModel" accept="image/*" style="display:none;">
-                    <div id="txtModel" style="text-align:center; color:var(--primary); font-size:11px; font-weight:600;">🙎‍♀️ Klik Upload Foto Model</div>
-                    <img id="imgModel" class="preview-img">
+                <div class="box-upload-asli" id="cardModel" style="display:none; margin-bottom:10px; border-color:var(--primary);">
+                    <input type="file" accept="image/*" onchange="bacaFotoAman(this, 'imgModel', 'txtModel', 'dataModel')">
+                    <div id="txtModel" class="teks" style="color:var(--primary);">🙎‍♀️ Klik Upload Foto Model</div>
+                    <img id="imgModel">
                 </div>
                 <input type="hidden" id="dataModel" data-mime="image/jpeg">
 
@@ -114,29 +117,25 @@
     <script>
         const KEYS = "AIzaSyA2Ox-W1IykjypH2J8lC6pDL--SaX1ogYA,AIzaSyAR9bP_4FSzAYfOWr4r-CrNXLeMAW3id80,AIzaSyDpwSlrdXqXYeUl-4xzZvr6VR74IG13dJI,AIzaSyAK_yHQFz_JCKE-wwYYQHIygmTYePUbwH4,AIzaSyB6Qa53GBXRRE2U8LVsWVXJ5RqUtDVUbCE,AIzaSyDiSIyfHMKIHf1tKhdEVQSfaU6SIihpChY,AIzaSyCsd72jfw7ulgmx_X-Ij_H5ZWc6nBzlgmk,AIzaSyDtRT_cEu5dp0nifcoAtPJ50Z3lDyXxLlY,AIzaSyAylMIUNaSuAauiPIKY2gUmcjJgh9fB350,AIzaSyAf5F4m2e8ITPJInPz3G6WpK-c5BK8zk08,AIzaSyA8KmL762stiDW5FbrYRUwrb-OGG2FJ6p4,AIzaSyCM3575RAXEtOTQXqOtCECWJAi6UR043fA,AIzaSyDMP4xbzx8D6JfOUqO33PGQhw6NoDM0Rm8,AIzaSyD-dc6b9NDklmD2uzlHm4Vgp82xk4afLdo,AIzaSyBy0rkdB7Q8UP810H0inT5MJqE9SAnEpZU,AIzaSyBFlo6ABw57bI1Q9fu7g5po0x0Db_XS_Bk,AIzaSyAydiilFPeJRdLvVGhRioTIKIRLYPAJcCY,AIzaSyA434055s8T4RWk_Es8eJv9NJ2VVAeo3qw,AIzaSyCaUqSEaQwz9ifVfpavsMtP0WBAN48p1Mc,AIzaSyDk2vzFGZgDVnxToB5qvuS8NyY-F2BK5g8,AIzaSyA54ihDYd2zCRU1aZA0fG3t_ATTUtx3BXM,AIzaSyDZWF67DHuMlcEfk7mkhfNLqhGgD3xI4zs,AIzaSyDeZKUJ2z9a4MVpyY_piReKAov9hZG1Jn8,AIzaSyDdhgbYr87HwKU_s08Z6b-Wngvpfqelc88,AIzaSyDDToIfvQdGGG3DvPij_vmVWqyXLYS7WoY,AIzaSyBjHDOM0iNfUA4Sn1drPLRxc_d8xC_TrnI,AIzaSyBcg_nvYs8Cvn6eSil4Td52zEEg_J3Oh7E,AIzaSyB0aqD83OQ2Cp36Hj-8ofa7oWqEq5Kgvow".split(',');
 
-        // SISTEM BACA FOTO PALING TAHAN BANTING
-        document.getElementById('fProd').addEventListener('change', function(e) {
-            bacaFoto(e, 'imgProd', 'txtProd', 'dataProd');
-        });
-
-        document.getElementById('fModel').addEventListener('change', function(e) {
-            bacaFoto(e, 'imgModel', 'txtModel', 'dataModel');
-        });
-
-        function bacaFoto(event, imgId, txtId, dataId) {
-            var file = event.target.files;
-            if (!file) return;
+        // FUNGSI BACA FOTO PALING PURBA (TIDAK MUNGKIN GAGAL)
+        function bacaFotoAman(inputElem, imgId, txtId, dataId) {
+            var file = inputElem.files;
+            if (!file) {
+                alert("File tidak terpilih. Silakan coba lagi.");
+                return;
+            }
 
             var reader = new FileReader();
             reader.onload = function(e) {
-                // Munculkan Foto
                 document.getElementById(imgId).src = e.target.result;
                 document.getElementById(imgId).style.display = 'block';
                 document.getElementById(txtId).style.display = 'none';
                 
-                // Simpan Data
                 document.getElementById(dataId).value = e.target.result.split(',');
                 document.getElementById(dataId).setAttribute('data-mime', file.type || 'image/jpeg');
+                
+                // Pop up tanda bahwa gambar sudah mendarat di sistem!
+                alert("Sistem berhasil menangkap gambar!");
             };
             reader.readAsDataURL(file);
         }
