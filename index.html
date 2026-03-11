@@ -126,17 +126,45 @@
     <script>
         const KEYS = "AIzaSyA2Ox-W1IykjypH2J8lC6pDL--SaX1ogYA,AIzaSyAR9bP_4FSzAYfOWr4r-CrNXLeMAW3id80,AIzaSyDpwSlrdXqXYeUl-4xzZvr6VR74IG13dJI,AIzaSyAK_yHQFz_JCKE-wwYYQHIygmTYePUbwH4,AIzaSyB6Qa53GBXRRE2U8LVsWVXJ5RqUtDVUbCE,AIzaSyDiSIyfHMKIHf1tKhdEVQSfaU6SIihpChY,AIzaSyCsd72jfw7ulgmx_X-Ij_H5ZWc6nBzlgmk,AIzaSyDtRT_cEu5dp0nifcoAtPJ50Z3lDyXxLlY,AIzaSyAylMIUNaSuAauiPIKY2gUmcjJgh9fB350,AIzaSyAf5F4m2e8ITPJInPz3G6WpK-c5BK8zk08,AIzaSyA8KmL762stiDW5FbrYRUwrb-OGG2FJ6p4,AIzaSyCM3575RAXEtOTQXqOtCECWJAi6UR043fA,AIzaSyDMP4xbzx8D6JfOUqO33PGQhw6NoDM0Rm8,AIzaSyD-dc6b9NDklmD2uzlHm4Vgp82xk4afLdo,AIzaSyBy0rkdB7Q8UP810H0inT5MJqE9SAnEpZU,AIzaSyBFlo6ABw57bI1Q9fu7g5po0x0Db_XS_Bk,AIzaSyAydiilFPeJRdLvVGhRioTIKIRLYPAJcCY,AIzaSyA434055s8T4RWk_Es8eJv9NJ2VVAeo3qw,AIzaSyCaUqSEaQwz9ifVfpavsMtP0WBAN48p1Mc,AIzaSyDk2vzFGZgDVnxToB5qvuS8NyY-F2BK5g8,AIzaSyA54ihDYd2zCRU1aZA0fG3t_ATTUtx3BXM,AIzaSyDZWF67DHuMlcEfk7mkhfNLqhGgD3xI4zs,AIzaSyDeZKUJ2z9a4MVpyY_piReKAov9hZG1Jn8,AIzaSyDdhgbYr87HwKU_s08Z6b-Wngvpfqelc88,AIzaSyDDToIfvQdGGG3DvPij_vmVWqyXLYS7WoY,AIzaSyBjHDOM0iNfUA4Sn1drPLRxc_d8xC_TrnI,AIzaSyBcg_nvYs8Cvn6eSil4Td52zEEg_J3Oh7E,AIzaSyB0aqD83OQ2Cp36Hj-8ofa7oWqEq5Kgvow".split(',');
 
-        // SISTEM BACA GAMBAR ANTI GAGAL (Standard Base64)
+        let mimeProd = "image/jpeg";
+        let mimeModel = "image/jpeg";
+
+        // SISTEM BACA & KOMPRESI GAMBAR ANTI GAGAL
         function readImg(input, imgId, txtId, dataId) {
             const file = input.files;
             if (!file) return;
+
             const reader = new FileReader();
             reader.onload = function(e) {
-                const base64String = e.target.result.split(',');
-                document.getElementById(dataId).value = base64String;
-                document.getElementById(imgId).src = e.target.result;
-                document.getElementById(imgId).style.display = 'block';
-                document.getElementById(txtId).style.display = 'none';
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const MAX_SIZE = 600; // Dikecilkan agar browser tidak hang
+                    let w = img.width;
+                    let h = img.height;
+
+                    if (w > h) { if (w > MAX_SIZE) { h *= MAX_SIZE / w; w = MAX_SIZE; } }
+                    else { if (h > MAX_SIZE) { w *= MAX_SIZE / h; h = MAX_SIZE; } }
+
+                    canvas.width = w; canvas.height = h;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, w, h);
+
+                    // Paksa konversi ke format JPEG ringan
+                    const dataURL = canvas.toDataURL('image/jpeg', 0.8);
+                    
+                    document.getElementById(dataId).value = dataURL.split(',');
+                    document.getElementById(imgId).src = dataURL;
+                    document.getElementById(imgId).style.display = 'block';
+                    document.getElementById(txtId).style.display = 'none';
+                    
+                    if(dataId === 'dataProd') mimeProd = 'image/jpeg';
+                    if(dataId === 'dataModel') mimeModel = 'image/jpeg';
+                };
+                img.onerror = function() {
+                    alert("Format gambar tidak didukung! Mohon gunakan foto JPG/PNG biasa.");
+                };
+                img.src = e.target.result;
             };
             reader.readAsDataURL(file);
         }
@@ -152,22 +180,22 @@
             const modelData = document.getElementById('dataModel').value;
             const source = document.getElementById('sSource').value;
             
-            if(!prodData) return alert("Sultan wajib upload Foto Produk dulu!");
-            if(source === 'CUSTOM' && !modelData) return alert("Sultan wajib upload Foto Model/Talent juga!");
+            if(!prodData) return alert("Sultan wajib upload Foto Produk dulu! 📸");
+            if(source === 'CUSTOM' && !modelData) return alert("Sultan wajib upload Foto Model/Talent juga! 🙎‍♀️");
 
             const btn = document.getElementById('btnGen');
             const stts = document.getElementById('sysStatus');
             btn.disabled = true; btn.innerText = "Memproses AI...";
             stts.className = "status loading"; stts.innerText = "Menembus Server Google...";
-            document.getElementById('out').innerHTML = "<div style='text-align:center; margin-top:100px; color:#ff6b00; font-weight:800;'>MENGANALISIS DATA...</div>";
+            document.getElementById('out').innerHTML = "<div style='text-align:center; margin-top:100px; color:#ff6b00; font-weight:800; letter-spacing: 2px;'>MENGANALISIS DATA VISUAL...</div>";
 
-            const detail = document.getElementById('dInput').value || "Produk terbaik";
+            const detail = document.getElementById('dInput').value || "Produk berkualitas premium";
             const gen = document.getElementById('sGen').value;
             const age = document.getElementById('sAge').value;
             const format = document.getElementById('sFormat').value;
             const camp = document.getElementById('sCamp').value;
 
-            // RAKIT DATA GAMBAR UNTUK DIKIRIM KE GEMINI
+            // RAKIT PROMPT GANDA
             let partsArray = [
                 { text: `Act as an Instagram Marketer. Analyze the product image provided. 
                 Product Detail: ${detail}. Target Audience: ${gen}, ${age}. Campaign: ${camp}. Output Format: ${format}.
@@ -184,12 +212,10 @@
                 5. (Prompt 5)` }
             ];
 
-            // Masukkan Foto Produk
-            partsArray.push({ inlineData: { mimeType: "image/jpeg", data: prodData } });
+            partsArray.push({ inlineData: { mimeType: mimeProd, data: prodData } });
             
-            // Jika pilih Upload Model, masukkan Foto Model juga ke otak AI
             if (source === 'CUSTOM') {
-                partsArray.push({ inlineData: { mimeType: "image/jpeg", data: modelData } });
+                partsArray.push({ inlineData: { mimeType: mimeModel, data: modelData } });
             }
 
             const key = KEYS[Math.floor(Math.random() * KEYS.length)];
@@ -201,7 +227,7 @@
                 });
 
                 const d = await response.json();
-                if (!response.ok) throw new Error(d.error?.message || "Limit Google");
+                if (!response.ok) throw new Error(d.error?.message || "Server Google Sedang Penuh");
 
                 const txt = d.candidates.content.parts.text;
                 const ps = txt.split('[GAMBAR]');
@@ -212,7 +238,7 @@
 
                 let html = `<div class="copy-card"><strong>NASKAH IKLAN:</strong><br><br>${naskah.replace(/\n/g, '<br>')}</div><div class="grid-photos">`;
                 pmpts.forEach((p, i) => {
-                    const cleanP = encodeURIComponent(p.substring(0,120) + ", high quality, 8k");
+                    const cleanP = encodeURIComponent(p.substring(0,120) + ", high quality, 8k resolution, photorealistic");
                     html += `<div class="photo-item"><img src="https://image.pollinations.ai/prompt/${cleanP}?width=${w}&height=${h}&nologo=true&seed=${Math.floor(Math.random()*999)}"><div class="meta">CONCEPT ${i+1}</div></div>`;
                 });
 
@@ -220,7 +246,7 @@
                 stts.className = "status"; stts.innerText = "Selesai!";
             } catch (e) {
                 stts.className = "status loading"; stts.innerText = "Error!";
-                alert("Gagal: " + e.message);
+                alert("INFO: " + e.message + ". Silakan klik tombol Generate sekali lagi!");
             }
             btn.disabled = false; btn.innerText = "🚀 GENERATE CONTENT";
         }
