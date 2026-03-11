@@ -3,108 +3,269 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CYZIO PRO V.9.6 | Enterprise AI</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap" rel="stylesheet">
+    <title>CYZIO PRO V.9.6 | Enterprise AI Analyzer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #f97316; --bg-dark: #020202; --border: rgba(255, 255, 255, 0.08); }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background-color: var(--bg-dark); color: #fff; height: 100vh; display: flex; overflow: hidden; }
-        .sidebar { width: 400px; background: rgba(15,15,15,0.9); border-right: 1px solid var(--border); padding: 30px; display: flex; flex-direction: column; }
-        .upload-card { width: 100%; height: 120px; border: 1px dashed var(--border); border-radius: 15px; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; overflow: hidden; margin: 20px 0; }
-        .preview-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: none; opacity: 0.5; }
-        .input-dark { width: 100%; background: #000; border: 1px solid var(--border); border-radius: 10px; padding: 15px; color: #fff; margin-bottom: 20px; outline: none; }
-        .btn-gen { background: var(--primary); color: #fff; border: none; padding: 20px; border-radius: 12px; width: 100%; font-weight: 800; cursor: pointer; transition: 0.3s; }
-        .btn-gen:disabled { opacity: 0.5; }
-        .main { flex: 1; padding: 40px; overflow-y: auto; background: radial-gradient(circle at top right, #1a0b02, transparent); }
-        .copy-card { background: rgba(255,255,255,0.03); padding: 25px; border-radius: 15px; border-left: 4px solid var(--primary); margin-bottom: 30px; white-space: pre-wrap; line-height: 1.6; }
-        .grid-photos { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-        .photo-item { background: #111; border-radius: 15px; overflow: hidden; border: 1px solid var(--border); }
-        .photo-item img { width: 100%; height: 380px; object-fit: cover; }
-        .status { font-size: 11px; color: var(--primary); text-align: center; margin-top: 10px; }
+        :root { --primary: #ff6b00; --primary-glow: rgba(255, 107, 0, 0.4); --bg-main: #050505; --bg-panel: rgba(15, 15, 15, 0.85); --border: rgba(255, 255, 255, 0.08); --text-dim: #94a3b8; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; scroll-behavior: smooth; }
+        body { background-color: var(--bg-main); color: #fff; height: 100vh; display: flex; overflow: hidden; background-image: radial-gradient(circle at top right, rgba(255,107,0,0.05), transparent 40%); }
+        
+        /* SCROLLBAR CUSTOM */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+        
+        /* SIDEBAR ELEGANT */
+        .sidebar { width: 420px; background: var(--bg-panel); border-right: 1px solid var(--border); display: flex; flex-direction: column; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); z-index: 10; box-shadow: 10px 0 30px rgba(0,0,0,0.5); }
+        .header { padding: 35px 30px 25px; border-bottom: 1px solid var(--border); background: linear-gradient(180deg, rgba(255,107,0,0.05) 0%, transparent 100%); }
+        .header h1 { font-size: 26px; font-weight: 800; letter-spacing: -1px; display: flex; align-items: center; gap: 8px; }
+        .header h1 span { color: var(--primary); text-shadow: 0 0 15px var(--primary-glow); }
+        .header .dev-badge { display: inline-block; margin-top: 10px; font-size: 9px; padding: 4px 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; letter-spacing: 1px; color: var(--text-dim); }
+        
+        .form-area { flex: 1; overflow-y: auto; padding: 30px; display: flex; flex-direction: column; gap: 25px; }
+        .section-title { font-size: 11px; font-weight: 800; color: var(--primary); letter-spacing: 1.5px; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        .section-title::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, var(--border), transparent); }
+        
+        /* INPUTS */
+        .upload-card { width: 100%; height: 140px; border: 1px dashed rgba(255,255,255,0.2); border-radius: 16px; background: rgba(0,0,0,0.3); display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease; position: relative; overflow: hidden; }
+        .upload-card:hover { border-color: var(--primary); background: rgba(255,107,0,0.05); transform: translateY(-2px); }
+        .preview-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.6; display: none; transition: 0.3s; }
+        .upload-card:hover .preview-img { opacity: 0.3; }
+        
+        .input-box { width: 100%; background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; color: #fff; font-size: 13px; outline: none; transition: 0.3s; box-shadow: inset 0 2px 5px rgba(0,0,0,0.2); }
+        .input-box:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(255,107,0,0.1); }
+        textarea.input-box { resize: none; height: 90px; line-height: 1.5; }
+        
+        .row { display: flex; gap: 15px; }
+        .col { flex: 1; }
+        .col label { display: block; font-size: 11px; color: var(--text-dim); margin-bottom: 8px; font-weight: 600; }
+        
+        /* BUTTON */
+        .btn-gen { background: linear-gradient(135deg, #ff6b00 0%, #cc5500 100%); color: #fff; border: none; padding: 20px; border-radius: 14px; width: 100%; font-weight: 800; font-size: 14px; letter-spacing: 1px; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 10px 25px rgba(255,107,0,0.3); position: relative; overflow: hidden; margin-top: 10px; }
+        .btn-gen::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transition: 0.5s; }
+        .btn-gen:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(255,107,0,0.4); }
+        .btn-gen:hover::before { left: 100%; }
+        .btn-gen:disabled { opacity: 0.6; cursor: wait; transform: none; }
+        
+        /* MAIN WORKSPACE */
+        .main { flex: 1; padding: 40px 50px; overflow-y: auto; position: relative; }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; border-bottom: 1px solid var(--border); padding-bottom: 20px; }
+        .workspace-title { font-size: 12px; color: var(--text-dim); font-weight: 700; letter-spacing: 2px; text-transform: uppercase; }
+        .status-badge { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 600; color: #10b981; background: rgba(16,185,129,0.1); padding: 6px 12px; border-radius: 20px; border: 1px solid rgba(16,185,129,0.2); }
+        .status-badge.loading { color: var(--primary); background: rgba(255,107,0,0.1); border-color: rgba(255,107,0,0.2); }
+        .status-badge .dot { width: 6px; height: 6px; background: currentColor; border-radius: 50%; box-shadow: 0 0 10px currentColor; }
+        
+        /* RESULTS */
+        .empty-state { height: 60vh; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-dim); opacity: 0.5; }
+        .empty-state svg { width: 64px; height: 64px; margin-bottom: 20px; opacity: 0.5; }
+        
+        .copy-card { background: linear-gradient(145deg, rgba(20,20,20,0.8) 0%, rgba(10,10,10,0.9) 100%); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 40px; margin-bottom: 40px; line-height: 1.8; color: #e2e8f0; font-size: 15px; border-left: 4px solid var(--primary); box-shadow: 0 20px 40px rgba(0,0,0,0.4); backdrop-filter: blur(10px); }
+        .copy-card strong { color: #fff; font-size: 18px; display: block; margin-bottom: 15px; letter-spacing: 1px; }
+        
+        .grid-photos { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; }
+        .photo-item { background: #0a0a0a; border-radius: 20px; overflow: hidden; border: 1px solid var(--border); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; }
+        .photo-item:hover { transform: scale(1.03) translateY(-10px); border-color: var(--primary); box-shadow: 0 20px 40px rgba(0,0,0,0.5); z-index: 2; }
+        .photo-item img { width: 100%; height: 480px; object-fit: cover; transition: 0.5s; }
+        .photo-item:hover img { filter: brightness(1.1); }
+        .photo-item .meta { position: absolute; bottom: 0; left: 0; right: 0; padding: 20px; background: linear-gradient(0deg, #000 0%, transparent 100%); font-size: 11px; font-weight: 800; color: #fff; text-transform: uppercase; letter-spacing: 2px; text-align: center; }
+        
+        /* LOADER */
+        .loader { display: none; justify-content: center; gap: 8px; margin: 40px 0; }
+        .loader span { width: 12px; height: 12px; background: var(--primary); border-radius: 50%; animation: bounce 0.5s infinite alternate; box-shadow: 0 0 15px var(--primary-glow); }
+        .loader span:nth-child(2) { animation-delay: 0.15s; }
+        .loader span:nth-child(3) { animation-delay: 0.3s; }
+        @keyframes bounce { to { transform: translateY(-10px); opacity: 0.5; } }
     </style>
 </head>
 <body>
+
     <aside class="sidebar">
-        <h2 style="font-weight:800; letter-spacing:-1px;">CYZIO <span style="color:var(--primary)">PRO</span></h2>
-        <p style="font-size:10px; opacity:0.5; margin-bottom:20px;">V.9.6 ENTERPRISE | DEV: M. HANAFIAH</p>
+        <div class="header">
+            <h1>CYZIO <span>PRO</span></h1>
+            <div class="dev-badge">V.9.6 ENTERPRISE SUITE | DEV: MOHAMMAD HANAFIAH</div>
+        </div>
         
-        <label class="upload-card">
-            <input type="file" id="fInput" accept="image/*" style="display:none;" onchange="handleFile(this)">
-            <span id="upTxt">📷 Klik Upload Produk</span>
-            <img id="pImg" class="preview-img">
-        </label>
-        
-        <textarea id="dInput" class="input-dark" placeholder="Detail produk..."></textarea>
-        
-        <button class="btn-gen" id="btnGen" onclick="generate()">🚀 GENERATE CONTENT</button>
-        <div id="stts" class="status">Sistem Siap</div>
+        <div class="form-area">
+            <div>
+                <div class="section-title">01. PRODUCT DATA</div>
+                <label class="upload-card">
+                    <input type="file" id="fInput" accept="image/*" style="display:none;" onchange="handleFile(this)">
+                    <div id="upContent" style="text-align:center;">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-bottom:10px; opacity:0.7;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                        <p style="font-size:12px; font-weight:600;">Klik Upload Foto Utama</p>
+                        <p style="font-size:10px; color:var(--text-dim); margin-top:5px;">JPG/PNG (Auto-Compress)</p>
+                    </div>
+                    <img id="pImg" class="preview-img">
+                </label>
+                <textarea id="dInput" class="input-box" style="margin-top:15px;" placeholder="Tulis keunggulan / detail produk di sini..."></textarea>
+            </div>
+
+            <div>
+                <div class="section-title">02. TALENT STRATEGY</div>
+                <div class="row">
+                    <div class="col">
+                        <label>Target Gender</label>
+                        <select id="sGen" class="input-box">
+                            <option value="Wanita">Wanita</option>
+                            <option value="Pria">Pria</option>
+                            <option value="Pria dan Wanita">Bebas</option>
+                        </select>
+                    </div>
+                    <div class="col">
+                        <label>Usia Talent</label>
+                        <select id="sAge" class="input-box">
+                            <option value="20-an tahun">20-an (Gen Z)</option>
+                            <option value="30-an tahun">30-an (Millennial)</option>
+                            <option value="Remaja">Remaja</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div class="section-title">03. OUTPUT ENGINE</div>
+                <div class="row">
+                    <div class="col">
+                        <label>Format Visual</label>
+                        <select id="sFormat" class="input-box">
+                            <option value="9:16 (Vertical) for Reels/TikTok">9:16 (Vertical)</option>
+                            <option value="1:1 (Square) for Feed">1:1 (Square)</option>
+                        </select>
+                    </div>
+                    <div class="col">
+                        <label>Campaign Style</label>
+                        <select id="sCamp" class="input-box">
+                            <option value="Soft Selling / Lifestyle">Soft Selling</option>
+                            <option value="Hard Promo / Discount">Hard Promo</option>
+                            <option value="Storytelling / Emotional">Storytelling</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn-gen" id="btnGen" onclick="generate()">🚀 GENERATE CAMPAIGN</button>
+        </div>
     </aside>
 
     <main class="main">
+        <div class="top-bar">
+            <div class="workspace-title">Active Workspace / AI Generator</div>
+            <div class="status-badge" id="sysStatus"><div class="dot"></div> System Ready</div>
+        </div>
+
+        <div id="emptyState" class="empty-state">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+            <h2 style="font-weight:700; letter-spacing:1px; margin-bottom:10px;">MENUNGGU INSTRUKSI</h2>
+            <p style="font-size:13px;">Pilih foto dan setting strategi di panel sebelah kiri.</p>
+        </div>
+
+        <div class="loader" id="aiLoader"><span></span><span></span><span></span></div>
+        
         <div id="out"></div>
     </main>
 
-    <script type="module">
-        // IMPORT SDK LANGSUNG DARI GOOGLE
-        import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
-
+    <script>
+        // KUNCI GOOGLE BAPAK HANAFIAH (AUTO-ROTATION)
         const KEYS = "AIzaSyA2Ox-W1IykjypH2J8lC6pDL--SaX1ogYA,AIzaSyAR9bP_4FSzAYfOWr4r-CrNXLeMAW3id80,AIzaSyDpwSlrdXqXYeUl-4xzZvr6VR74IG13dJI,AIzaSyAK_yHQFz_JCKE-wwYYQHIygmTYePUbwH4,AIzaSyB6Qa53GBXRRE2U8LVsWVXJ5RqUtDVUbCE,AIzaSyDiSIyfHMKIHf1tKhdEVQSfaU6SIihpChY,AIzaSyCsd72jfw7ulgmx_X-Ij_H5ZWc6nBzlgmk,AIzaSyDtRT_cEu5dp0nifcoAtPJ50Z3lDyXxLlY,AIzaSyAylMIUNaSuAauiPIKY2gUmcjJgh9fB350,AIzaSyAf5F4m2e8ITPJInPz3G6WpK-c5BK8zk08,AIzaSyA8KmL762stiDW5FbrYRUwrb-OGG2FJ6p4,AIzaSyCM3575RAXEtOTQXqOtCECWJAi6UR043fA,AIzaSyDMP4xbzx8D6JfOUqO33PGQhw6NoDM0Rm8,AIzaSyD-dc6b9NDklmD2uzlHm4Vgp82xk4afLdo,AIzaSyBy0rkdB7Q8UP810H0inT5MJqE9SAnEpZU,AIzaSyBFlo6ABw57bI1Q9fu7g5po0x0Db_XS_Bk,AIzaSyAydiilFPeJRdLvVGhRioTIKIRLYPAJcCY,AIzaSyA434055s8T4RWk_Es8eJv9NJ2VVAeo3qw,AIzaSyCaUqSEaQwz9ifVfpavsMtP0WBAN48p1Mc,AIzaSyDk2vzFGZgDVnxToB5qvuS8NyY-F2BK5g8,AIzaSyA54ihDYd2zCRU1aZA0fG3t_ATTUtx3BXM,AIzaSyDZWF67DHuMlcEfk7mkhfNLqhGgD3xI4zs,AIzaSyDeZKUJ2z9a4MVpyY_piReKAov9hZG1Jn8,AIzaSyDdhgbYr87HwKU_s08Z6b-Wngvpfqelc88,AIzaSyDDToIfvQdGGG3DvPij_vmVWqyXLYS7WoY,AIzaSyBjHDOM0iNfUA4Sn1drPLRxc_d8xC_TrnI,AIzaSyBcg_nvYs8Cvn6eSil4Td52zEEg_J3Oh7E,AIzaSyB0aqD83OQ2Cp36Hj-8ofa7oWqEq5Kgvow".split(',');
-        
         let imgData = null;
 
-        window.handleFile = (input) => {
-            const f = input.files[0];
+        // FUNGSI KOMPRESI GAMBAR KILAT
+        function handleFile(input) {
+            const f = input.files;
+            if(!f) return;
             const r = new FileReader();
             r.onload = e => {
                 const img = new Image();
                 img.onload = () => {
                     const canv = document.createElement('canvas');
                     const MAX = 400; let w = img.width, h = img.height;
-                    if (w > h) { if (w > MAX) { h *= MAX/w; w = MAX; } }
-                    else { if (h > MAX) { w *= MAX/h; h = MAX; } }
+                    if (w > h) { if (w > MAX) { h *= MAX/w; w = MAX; } } else { if (h > MAX) { w *= MAX/h; h = MAX; } }
                     canv.width = w; canv.height = h;
                     canv.getContext('2d').drawImage(img, 0, 0, w, h);
-                    imgData = canv.toDataURL('image/jpeg', 0.6).split(',')[1];
+                    imgData = canv.toDataURL('image/jpeg', 0.6).split(',');
                     document.getElementById('pImg').src = canv.toDataURL('image/jpeg');
                     document.getElementById('pImg').style.display = 'block';
-                    document.getElementById('upTxt').style.display = 'none';
+                    document.getElementById('upContent').style.display = 'none';
                 }
                 img.src = e.target.result;
             }
             r.readAsDataURL(f);
         }
 
-        window.generate = async () => {
-            if(!imgData) return alert("Upload foto produk!");
+        // FUNGSI UTAMA AI
+        async function generate() {
+            if(!imgData) return alert("Sultan wajib upload foto produk dulu! 📸");
+            
+            // Ambil Data Fitur
+            const detail = document.getElementById('dInput').value || "Produk berkualitas premium";
+            const gen = document.getElementById('sGen').value;
+            const age = document.getElementById('sAge').value;
+            const format = document.getElementById('sFormat').value;
+            const camp = document.getElementById('sCamp').value;
+
+            // Atur Tampilan Loading
             const btn = document.getElementById('btnGen');
-            const stts = document.getElementById('stts');
-            btn.disabled = true; stts.innerText = "AI sedang berpikir (15-20 detik)...";
+            const stts = document.getElementById('sysStatus');
+            btn.disabled = true; btn.innerText = "MEMPROSES AI...";
+            stts.className = "status-badge loading"; stts.innerHTML = `<div class="dot"></div> Menembus Server Google...`;
+            document.getElementById('emptyState').style.display = 'none';
+            document.getElementById('out').innerHTML = "";
+            document.getElementById('aiLoader').style.display = 'flex';
+
+            // Ramuan Prompt Hebat
+            const promptText = `Act as an expert Instagram Marketer. Analyze this product image and the user parameters:
+- Product Detail: ${detail}
+- Target Talent: ${gen}, ${age}
+- Output Format: ${format}
+- Campaign Style: ${camp}
+
+Produce exactly:
+[NASKAH]
+Write 1 highly engaging Instagram caption based on the Campaign Style. Include emojis and hashtags. Use Indonesian language.
+[GAMBAR]
+Provide 5 very detailed English prompts for an AI image generator. The prompts MUST describe photorealistic promotional photos featuring the target talent (${gen}, ${age}) interacting with the product in a ${format} aspect ratio. Number them 1 to 5.`;
 
             const key = KEYS[Math.floor(Math.random() * KEYS.length)];
-            const genAI = new GoogleGenerativeAI(key);
-            const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`;
 
             try {
-                const prompt = "Analyze this product. Write [NASKAH] (Instagram Caption) and [GAMBAR] (5 detailed image prompts in English).";
-                const result = await model.generateContent([prompt, { inlineData: { data: imgData, mimeType: "image/jpeg" } }]);
-                const txt = result.response.text();
-
-                const parts = txt.split('[GAMBAR]');
-                const naskah = parts[0].replace('[NASKAH]', '').trim();
-                const pmpts = parts[1].match(/\d+\.\s*(.*)/g).map(p => p.replace(/\d+\.\s*/, '').trim());
-
-                let html = `<div class="copy-card"><strong>BERHASIL! STRATEGI IKLAN:</strong>\n\n${naskah}</div><div class="grid-photos">`;
-                pmpts.forEach((p, i) => {
-                    const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(p.substring(0,100)+", high quality, photorealistic, 8k")}?width=540&height=960&nologo=true&seed=${Math.floor(Math.random()*999)}`;
-                    html += `<div class="photo-item"><img src="${url}"><div style="padding:15px; font-size:10px; text-align:center; opacity:0.6;">CONCEPT ${i+1}</div></div>`;
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [ { text: promptText }, { inlineData: { mimeType: "image/jpeg", data: imgData } } ] }]
+                    })
                 });
+
+                const d = await response.json();
+                if (!response.ok) throw new Error(d.error?.message || "Google Sibuk");
+
+                const txt = d.candidates.content.parts.text;
+                const ps = txt.split('[GAMBAR]');
+                const naskah = ps.replace('[NASKAH]', '').trim();
+                const pmpts = ps.match(/\d+\.\s*(.*)/g).map(p => p.replace(/\d+\.\s*/, '').trim());
+
+                // Set Ukuran Gambar Sesuai Format
+                let w = 540, h = 960; // 9:16 Default
+                if(format.includes("1:1")) { w = 800; h = 800; }
+
+                let html = `<div class="copy-card"><strong>STRATEGI COPYWRITING:</strong>${naskah.replace(/\n/g, '<br>')}</div><div class="grid-photos">`;
+                
+                pmpts.forEach((p, i) => {
+                    const cleanP = encodeURIComponent(p.substring(0,150) + ", photorealistic, high quality, 8k resolution, advertising photography");
+                    const imgUrl = `https://image.pollinations.ai/prompt/${cleanP}?width=${w}&height=${h}&nologo=true&seed=${Math.floor(Math.random()*9999)}`;
+                    html += `<div class="photo-item"><img src="${imgUrl}"><div class="meta">VISUAL CONCEPT ${i+1}</div></div>`;
+                });
+
                 document.getElementById('out').innerHTML = html + "</div>";
-                stts.innerText = "Generasi Selesai!";
+                stts.className = "status-badge"; stts.innerHTML = `<div class="dot"></div> Generation Complete`;
             } catch (e) {
-                stts.innerText = "Gagal. Klik lagi bos!";
-                console.error(e);
+                stts.className = "status-badge loading"; stts.innerHTML = `<div class="dot" style="background:red;box-shadow:none;"></div> Error Server`;
+                alert("Gagal cuy: " + e.message + ". Langsung klik tombol Generate lagi aja!");
             }
-            btn.disabled = false;
+            
+            btn.disabled = false; btn.innerText = "🚀 GENERATE CAMPAIGN";
+            document.getElementById('aiLoader').style.display = 'none';
         }
     </script>
 </body>
