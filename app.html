@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CYZIO PRO V.9.6 | Enterprise AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #f97316; --bg-dark: #020202; --border: rgba(255, 255, 255, 0.08); }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: var(--bg-dark); color: #fff; height: 100vh; display: flex; overflow: hidden; }
+        .sidebar { width: 400px; background: rgba(15,15,15,0.9); border-right: 1px solid var(--border); padding: 30px; display: flex; flex-direction: column; }
+        .upload-card { width: 100%; height: 120px; border: 1px dashed var(--border); border-radius: 15px; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; overflow: hidden; margin: 20px 0; }
+        .preview-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: none; opacity: 0.5; }
+        .input-dark { width: 100%; background: #000; border: 1px solid var(--border); border-radius: 10px; padding: 15px; color: #fff; margin-bottom: 20px; outline: none; }
+        .btn-gen { background: var(--primary); color: #fff; border: none; padding: 20px; border-radius: 12px; width: 100%; font-weight: 800; cursor: pointer; transition: 0.3s; }
+        .btn-gen:disabled { opacity: 0.5; }
+        .main { flex: 1; padding: 40px; overflow-y: auto; background: radial-gradient(circle at top right, #1a0b02, transparent); }
+        .copy-card { background: rgba(255,255,255,0.03); padding: 25px; border-radius: 15px; border-left: 4px solid var(--primary); margin-bottom: 30px; white-space: pre-wrap; line-height: 1.6; }
+        .grid-photos { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        .photo-item { background: #111; border-radius: 15px; overflow: hidden; border: 1px solid var(--border); }
+        .photo-item img { width: 100%; height: 380px; object-fit: cover; }
+        .status { font-size: 11px; color: var(--primary); text-align: center; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <h2 style="font-weight:800; letter-spacing:-1px;">CYZIO <span style="color:var(--primary)">PRO</span></h2>
+        <p style="font-size:10px; opacity:0.5; margin-bottom:20px;">V.9.6 ENTERPRISE | DEV: M. HANAFIAH</p>
+        
+        <label class="upload-card">
+            <input type="file" id="fInput" accept="image/*" style="display:none;" onchange="handleFile(this)">
+            <span id="upTxt">📷 Klik Upload Produk</span>
+            <img id="pImg" class="preview-img">
+        </label>
+        
+        <textarea id="dInput" class="input-dark" placeholder="Detail produk..."></textarea>
+        
+        <button class="btn-gen" id="btnGen" onclick="generate()">🚀 GENERATE CONTENT</button>
+        <div id="stts" class="status">Sistem Siap</div>
+    </aside>
+
+    <main class="main">
+        <div id="out"></div>
+    </main>
+
+    <script type="module">
+        // IMPORT SDK LANGSUNG DARI GOOGLE
+        import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
+
+        const KEYS = "AIzaSyA2Ox-W1IykjypH2J8lC6pDL--SaX1ogYA,AIzaSyAR9bP_4FSzAYfOWr4r-CrNXLeMAW3id80,AIzaSyDpwSlrdXqXYeUl-4xzZvr6VR74IG13dJI,AIzaSyAK_yHQFz_JCKE-wwYYQHIygmTYePUbwH4,AIzaSyB6Qa53GBXRRE2U8LVsWVXJ5RqUtDVUbCE,AIzaSyDiSIyfHMKIHf1tKhdEVQSfaU6SIihpChY,AIzaSyCsd72jfw7ulgmx_X-Ij_H5ZWc6nBzlgmk,AIzaSyDtRT_cEu5dp0nifcoAtPJ50Z3lDyXxLlY,AIzaSyAylMIUNaSuAauiPIKY2gUmcjJgh9fB350,AIzaSyAf5F4m2e8ITPJInPz3G6WpK-c5BK8zk08,AIzaSyA8KmL762stiDW5FbrYRUwrb-OGG2FJ6p4,AIzaSyCM3575RAXEtOTQXqOtCECWJAi6UR043fA,AIzaSyDMP4xbzx8D6JfOUqO33PGQhw6NoDM0Rm8,AIzaSyD-dc6b9NDklmD2uzlHm4Vgp82xk4afLdo,AIzaSyBy0rkdB7Q8UP810H0inT5MJqE9SAnEpZU,AIzaSyBFlo6ABw57bI1Q9fu7g5po0x0Db_XS_Bk,AIzaSyAydiilFPeJRdLvVGhRioTIKIRLYPAJcCY,AIzaSyA434055s8T4RWk_Es8eJv9NJ2VVAeo3qw,AIzaSyCaUqSEaQwz9ifVfpavsMtP0WBAN48p1Mc,AIzaSyDk2vzFGZgDVnxToB5qvuS8NyY-F2BK5g8,AIzaSyA54ihDYd2zCRU1aZA0fG3t_ATTUtx3BXM,AIzaSyDZWF67DHuMlcEfk7mkhfNLqhGgD3xI4zs,AIzaSyDeZKUJ2z9a4MVpyY_piReKAov9hZG1Jn8,AIzaSyDdhgbYr87HwKU_s08Z6b-Wngvpfqelc88,AIzaSyDDToIfvQdGGG3DvPij_vmVWqyXLYS7WoY,AIzaSyBjHDOM0iNfUA4Sn1drPLRxc_d8xC_TrnI,AIzaSyBcg_nvYs8Cvn6eSil4Td52zEEg_J3Oh7E,AIzaSyB0aqD83OQ2Cp36Hj-8ofa7oWqEq5Kgvow".split(',');
+        
+        let imgData = null;
+
+        window.handleFile = (input) => {
+            const f = input.files[0];
+            const r = new FileReader();
+            r.onload = e => {
+                const img = new Image();
+                img.onload = () => {
+                    const canv = document.createElement('canvas');
+                    const MAX = 400; let w = img.width, h = img.height;
+                    if (w > h) { if (w > MAX) { h *= MAX/w; w = MAX; } }
+                    else { if (h > MAX) { w *= MAX/h; h = MAX; } }
+                    canv.width = w; canv.height = h;
+                    canv.getContext('2d').drawImage(img, 0, 0, w, h);
+                    imgData = canv.toDataURL('image/jpeg', 0.6).split(',')[1];
+                    document.getElementById('pImg').src = canv.toDataURL('image/jpeg');
+                    document.getElementById('pImg').style.display = 'block';
+                    document.getElementById('upTxt').style.display = 'none';
+                }
+                img.src = e.target.result;
+            }
+            r.readAsDataURL(f);
+        }
+
+        window.generate = async () => {
+            if(!imgData) return alert("Upload foto produk!");
+            const btn = document.getElementById('btnGen');
+            const stts = document.getElementById('stts');
+            btn.disabled = true; stts.innerText = "AI sedang berpikir (15-20 detik)...";
+
+            const key = KEYS[Math.floor(Math.random() * KEYS.length)];
+            const genAI = new GoogleGenerativeAI(key);
+            const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+            try {
+                const prompt = "Analyze this product. Write [NASKAH] (Instagram Caption) and [GAMBAR] (5 detailed image prompts in English).";
+                const result = await model.generateContent([prompt, { inlineData: { data: imgData, mimeType: "image/jpeg" } }]);
+                const txt = result.response.text();
+
+                const parts = txt.split('[GAMBAR]');
+                const naskah = parts[0].replace('[NASKAH]', '').trim();
+                const pmpts = parts[1].match(/\d+\.\s*(.*)/g).map(p => p.replace(/\d+\.\s*/, '').trim());
+
+                let html = `<div class="copy-card"><strong>BERHASIL! STRATEGI IKLAN:</strong>\n\n${naskah}</div><div class="grid-photos">`;
+                pmpts.forEach((p, i) => {
+                    const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(p.substring(0,100)+", high quality, photorealistic, 8k")}?width=540&height=960&nologo=true&seed=${Math.floor(Math.random()*999)}`;
+                    html += `<div class="photo-item"><img src="${url}"><div style="padding:15px; font-size:10px; text-align:center; opacity:0.6;">CONCEPT ${i+1}</div></div>`;
+                });
+                document.getElementById('out').innerHTML = html + "</div>";
+                stts.innerText = "Generasi Selesai!";
+            } catch (e) {
+                stts.innerText = "Gagal. Klik lagi bos!";
+                console.error(e);
+            }
+            btn.disabled = false;
+        }
+    </script>
+</body>
+</html>
