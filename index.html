@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CYZIO PRO V.9.9.1 | PERFECT BYPASS</title>
+    <title>CYZIO PRO V.10.0 | FINAL BOSS</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #ff6b00; --bg-main: #050505; --bg-panel: #0a0a0a; --border: #1f1f1f; --text-dim: #94a3b8; }
@@ -38,7 +38,7 @@
 </head>
 <body>
     <aside class="sidebar">
-        <div class="header"><h1>CYZIO <span>PRO</span></h1><div class="dev-badge">V.9.9.1 PERFECT BYPASS</div></div>
+        <div class="header"><h1>CYZIO <span>PRO</span></h1><div class="dev-badge">V.10.0 FINAL BOSS</div></div>
         <div class="form-area">
             
             <div>
@@ -47,7 +47,6 @@
                     <div class="text" id="txtProd">KLIK KOTAK INI<br>LALU TEKAN <strong>(CTRL + V)</strong></div>
                     <img id="imgProd">
                 </div>
-                <input type="hidden" id="dataProd">
             </div>
 
             <div style="margin-top:20px;">
@@ -73,6 +72,10 @@
 
     <script>
         const KEYS = "AIzaSyA2Ox-W1IykjypH2J8lC6pDL--SaX1ogYA,AIzaSyAR9bP_4FSzAYfOWr4r-CrNXLeMAW3id80,AIzaSyDpwSlrdXqXYeUl-4xzZvr6VR74IG13dJI,AIzaSyAK_yHQFz_JCKE-wwYYQHIygmTYePUbwH4,AIzaSyB6Qa53GBXRRE2U8LVsWVXJ5RqUtDVUbCE,AIzaSyDiSIyfHMKIHf1tKhdEVQSfaU6SIihpChY,AIzaSyCsd72jfw7ulgmx_X-Ij_H5ZWc6nBzlgmk,AIzaSyDtRT_cEu5dp0nifcoAtPJ50Z3lDyXxLlY,AIzaSyAylMIUNaSuAauiPIKY2gUmcjJgh9fB350,AIzaSyAf5F4m2e8ITPJInPz3G6WpK-c5BK8zk08,AIzaSyA8KmL762stiDW5FbrYRUwrb-OGG2FJ6p4,AIzaSyCM3575RAXEtOTQXqOtCECWJAi6UR043fA,AIzaSyDMP4xbzx8D6JfOUqO33PGQhw6NoDM0Rm8,AIzaSyD-dc6b9NDklmD2uzlHm4Vgp82xk4afLdo,AIzaSyBy0rkdB7Q8UP810H0inT5MJqE9SAnEpZU,AIzaSyBFlo6ABw57bI1Q9fu7g5po0x0Db_XS_Bk,AIzaSyAydiilFPeJRdLvVGhRioTIKIRLYPAJcCY,AIzaSyA434055s8T4RWk_Es8eJv9NJ2VVAeo3qw,AIzaSyCaUqSEaQwz9ifVfpavsMtP0WBAN48p1Mc,AIzaSyDk2vzFGZgDVnxToB5qvuS8NyY-F2BK5g8,AIzaSyA54ihDYd2zCRU1aZA0fG3t_ATTUtx3BXM,AIzaSyDZWF67DHuMlcEfk7mkhfNLqhGgD3xI4zs,AIzaSyDeZKUJ2z9a4MVpyY_piReKAov9hZG1Jn8,AIzaSyDdhgbYr87HwKU_s08Z6b-Wngvpfqelc88,AIzaSyDDToIfvQdGGG3DvPij_vmVWqyXLYS7WoY,AIzaSyBjHDOM0iNfUA4Sn1drPLRxc_d8xC_TrnI,AIzaSyBcg_nvYs8Cvn6eSil4Td52zEEg_J3Oh7E,AIzaSyB0aqD83OQ2Cp36Hj-8ofa7oWqEq5Kgvow".split(',');
+        
+        // VARIABLE GLOBAL (RAM) - Menyimpan foto di "Otak" Browser agar tidak keselek HTML
+        let FOTO_PRODUK_MEMORY = ""; 
+        let MIME_TYPE = "image/jpeg";
 
         document.getElementById('pasteProd').addEventListener('paste', function(e) {
             e.preventDefault();
@@ -87,7 +90,15 @@
                         document.getElementById('imgProd').src = event.target.result;
                         document.getElementById('imgProd').style.display = 'block';
                         document.getElementById('txtProd').style.display = 'none';
-                        document.getElementById('dataProd').value = event.target.result; 
+                        
+                        // Ekstrak kode murni dan simpan ke memori RAM
+                        var mentah = event.target.result;
+                        if(mentah.includes(',')) {
+                            mentah = mentah.split(',')[1];
+                        }
+                        // Bersihkan spasi atau enter gaib yang bikin Google error
+                        FOTO_PRODUK_MEMORY = mentah.replace(/\s+/g, '');
+                        MIME_TYPE = blob.type || "image/jpeg";
                     };
                     reader.readAsDataURL(blob);
                     break;
@@ -96,17 +107,7 @@
         });
 
         async function generate() {
-            var rawData = document.getElementById('dataProd').value;
-            if(!rawData) return alert("Bapak wajib Paste Foto Produk dulu!");
-
-            // PEMBUNUH LABEL: Mengambil murni kodenya saja tanpa label data:image...
-            var prodData = rawData;
-            if(rawData.includes(',')) {
-                prodData = rawData.split(',');
-            }
-            if(prodData.includes('base64,')) {
-                prodData = prodData.split('base64,');
-            }
+            if(!FOTO_PRODUK_MEMORY) return alert("Bapak wajib Paste Foto Produk dulu!");
 
             var btn = document.getElementById('btnGen');
             var stts = document.getElementById('sysStatus');
@@ -136,16 +137,16 @@
             try {
                 var res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: [{text: pr}, {inlineData: {mimeType: "image/jpeg", data: prodData}}] }] })
+                    body: JSON.stringify({ contents: [{ parts: [{text: pr}, {inlineData: {mimeType: MIME_TYPE, data: FOTO_PRODUK_MEMORY}}] }] })
                 });
 
                 var dt = await res.json();
                 if (!res.ok) throw new Error(dt.error?.message || "Google Sibuk");
 
-                var txt = dt.candidates.content.parts.text;
+                var txt = dt.candidates[0].content.parts[0].text;
                 var ps = txt.split('[GAMBAR]');
-                var naskah = ps.replace('[NASKAH]', '').trim();
-                var pmpts = ps.match(/\d+\.\s*(.*)/g).map(p => p.replace(/\d+\.\s*/, '').trim());
+                var naskah = ps[0].replace('[NASKAH]', '').trim();
+                var pmpts = ps[1].match(/\d+\.\s*(.*)/g).map(p => p.replace(/\d+\.\s*/, '').trim());
 
                 var w = 540, h = 960; if(f.includes("1:1")) { w = 800; h = 800; }
 
@@ -157,7 +158,8 @@
                 document.getElementById('out').innerHTML = html + "</div>";
                 stts.innerText = "Selesai!";
             } catch (e) {
-                alert("Klik tombol GENERATE lagi Pak: " + e.message);
+                stts.innerText = "Error!";
+                alert("Gagal menembus. Klik tombol GENERATE sekali lagi Pak: " + e.message);
             }
             btn.disabled = false; btn.innerText = "🚀 GENERATE CONTENT";
         }
