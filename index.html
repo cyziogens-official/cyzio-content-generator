@@ -53,12 +53,12 @@
         <div class="form-area">
             <div>
                 <div class="sec-title">01. PRODUCT DATA</div>
-                <label class="upload-card" for="fProdInput">
-                    <input type="file" id="fProdInput" accept="image/*" style="display:none;">
+                <label class="upload-card">
+                    <input type="file" accept="image/*" style="display:none;" onchange="tampilkanGambar(this, 'imgProd', 'txtProd', 'dataProd')">
                     <div id="txtProd" style="text-align:center; color:var(--text-dim); font-size:11px; font-weight:600;">📷 Klik Upload Foto Produk</div>
                     <img id="imgProd" class="preview-img">
                 </label>
-                <input type="hidden" id="dataProd" data-mime="">
+                <input type="hidden" id="dataProd" data-mime="image/jpeg">
                 <textarea id="dInput" class="input-box" style="margin-top:10px;" placeholder="Detail/Keunggulan produk..."></textarea>
             </div>
 
@@ -74,12 +74,12 @@
                     </div>
                 </div>
                 
-                <label class="upload-card" for="fModelInput" id="cardModel" style="display:none; margin-bottom:10px; border-color:var(--primary);">
-                    <input type="file" id="fModelInput" accept="image/*" style="display:none;">
+                <label class="upload-card" id="cardModel" style="display:none; margin-bottom:10px; border-color:var(--primary);">
+                    <input type="file" accept="image/*" style="display:none;" onchange="tampilkanGambar(this, 'imgModel', 'txtModel', 'dataModel')">
                     <div id="txtModel" style="text-align:center; color:var(--primary); font-size:11px; font-weight:600;">🙎‍♀️ Klik Upload Foto Model</div>
                     <img id="imgModel" class="preview-img">
                 </label>
-                <input type="hidden" id="dataModel" data-mime="">
+                <input type="hidden" id="dataModel" data-mime="image/jpeg">
 
                 <div class="row">
                     <div class="col"><label>Gender</label><select id="sGen" class="input-box"><option>Wanita</option><option>Pria</option><option>Couple</option></select></div>
@@ -114,71 +114,59 @@
     <script>
         const KEYS = "AIzaSyA2Ox-W1IykjypH2J8lC6pDL--SaX1ogYA,AIzaSyAR9bP_4FSzAYfOWr4r-CrNXLeMAW3id80,AIzaSyDpwSlrdXqXYeUl-4xzZvr6VR74IG13dJI,AIzaSyAK_yHQFz_JCKE-wwYYQHIygmTYePUbwH4,AIzaSyB6Qa53GBXRRE2U8LVsWVXJ5RqUtDVUbCE,AIzaSyDiSIyfHMKIHf1tKhdEVQSfaU6SIihpChY,AIzaSyCsd72jfw7ulgmx_X-Ij_H5ZWc6nBzlgmk,AIzaSyDtRT_cEu5dp0nifcoAtPJ50Z3lDyXxLlY,AIzaSyAylMIUNaSuAauiPIKY2gUmcjJgh9fB350,AIzaSyAf5F4m2e8ITPJInPz3G6WpK-c5BK8zk08,AIzaSyA8KmL762stiDW5FbrYRUwrb-OGG2FJ6p4,AIzaSyCM3575RAXEtOTQXqOtCECWJAi6UR043fA,AIzaSyDMP4xbzx8D6JfOUqO33PGQhw6NoDM0Rm8,AIzaSyD-dc6b9NDklmD2uzlHm4Vgp82xk4afLdo,AIzaSyBy0rkdB7Q8UP810H0inT5MJqE9SAnEpZU,AIzaSyBFlo6ABw57bI1Q9fu7g5po0x0Db_XS_Bk,AIzaSyAydiilFPeJRdLvVGhRioTIKIRLYPAJcCY,AIzaSyA434055s8T4RWk_Es8eJv9NJ2VVAeo3qw,AIzaSyCaUqSEaQwz9ifVfpavsMtP0WBAN48p1Mc,AIzaSyDk2vzFGZgDVnxToB5qvuS8NyY-F2BK5g8,AIzaSyA54ihDYd2zCRU1aZA0fG3t_ATTUtx3BXM,AIzaSyDZWF67DHuMlcEfk7mkhfNLqhGgD3xI4zs,AIzaSyDeZKUJ2z9a4MVpyY_piReKAov9hZG1Jn8,AIzaSyDdhgbYr87HwKU_s08Z6b-Wngvpfqelc88,AIzaSyDDToIfvQdGGG3DvPij_vmVWqyXLYS7WoY,AIzaSyBjHDOM0iNfUA4Sn1drPLRxc_d8xC_TrnI,AIzaSyBcg_nvYs8Cvn6eSil4Td52zEEg_J3Oh7E,AIzaSyB0aqD83OQ2Cp36Hj-8ofa7oWqEq5Kgvow".split(',');
 
-        document.getElementById('fProdInput').addEventListener('change', function(e) {
-            processImage(e.target.files, 'imgProd', 'txtProd', 'dataProd');
-        });
-
-        document.getElementById('fModelInput').addEventListener('change', function(e) {
-            processImage(e.target.files, 'imgModel', 'txtModel', 'dataModel');
-        });
-
-        function processImage(file, imgId, txtId, dataId) {
-            if (!file) return;
-
-            // Pengecekan ukuran saja (Maks 4MB untuk API Google)
-            if(file.size > 4 * 1024 * 1024) {
-                alert("Ukuran file maksimal 4MB Pak. Tolong screenshot fotonya saja, lalu upload hasil screenshot-nya agar ringan.");
-                return;
+        // FUNGSI PALING DASAR DAN AMAN DI SELURUH BROWSER
+        function tampilkanGambar(inputElement, idGambar, idTeks, idData) {
+            if (inputElement.files && inputElement.files) {
+                var file = inputElement.files;
+                var reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    // 1. Munculkan gambar ke layar
+                    document.getElementById(idGambar).src = e.target.result;
+                    document.getElementById(idGambar).style.display = 'block';
+                    document.getElementById(idTeks).style.display = 'none';
+                    
+                    // 2. Simpan data rahasia untuk AI
+                    var base64 = e.target.result.split(',');
+                    var formatGambar = file.type || "image/jpeg";
+                    
+                    document.getElementById(idData).value = base64;
+                    document.getElementById(idData).setAttribute('data-mime', formatGambar);
+                };
+                
+                reader.readAsDataURL(file);
             }
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const base64String = e.target.result.split(',');
-                // Otomatis tangkap format apa pun yang dimasukkan Bapak (jpg/png/webp dll)
-                const mimeType = file.type || "image/jpeg"; 
-
-                const hiddenInput = document.getElementById(dataId);
-                hiddenInput.value = base64String;
-                hiddenInput.setAttribute('data-mime', mimeType);
-
-                document.getElementById(imgId).src = e.target.result;
-                document.getElementById(imgId).style.display = 'block';
-                document.getElementById(txtId).style.display = 'none';
-            };
-            reader.onerror = function() { alert("Gagal membaca gambar."); };
-            reader.readAsDataURL(file); 
         }
 
         function toggleModel() {
-            const val = document.getElementById('sSource').value;
+            var val = document.getElementById('sSource').value;
             document.getElementById('cardModel').style.display = (val === 'CUSTOM') ? 'flex' : 'none';
         }
 
         async function generate() {
-            const prodData = document.getElementById('dataProd').value;
-            const modelData = document.getElementById('dataModel').value;
-            const source = document.getElementById('sSource').value;
+            var prodData = document.getElementById('dataProd').value;
+            var modelData = document.getElementById('dataModel').value;
+            var source = document.getElementById('sSource').value;
             
             if(!prodData) return alert("Bapak wajib upload Foto Produk dulu!");
             if(source === 'CUSTOM' && !modelData) return alert("Bapak wajib upload Foto Model juga!");
 
-            const btn = document.getElementById('btnGen');
-            const stts = document.getElementById('sysStatus');
+            var btn = document.getElementById('btnGen');
+            var stts = document.getElementById('sysStatus');
             btn.disabled = true; btn.innerText = "Menganalisis Data...";
             stts.className = "status loading"; stts.innerText = "Menembus Server Google...";
             document.getElementById('out').innerHTML = "<div style='text-align:center; margin-top:100px; color:#ff6b00; font-weight:800;'>MENGANALISIS DATA VISUAL...</div>";
 
-            const detail = document.getElementById('dInput').value || "Produk terbaik";
-            const gen = document.getElementById('sGen').value;
-            const age = document.getElementById('sAge').value;
-            const format = document.getElementById('sFormat').value;
-            const camp = document.getElementById('sCamp').value;
+            var detail = document.getElementById('dInput').value || "Produk terbaik";
+            var gen = document.getElementById('sGen').value;
+            var age = document.getElementById('sAge').value;
+            var format = document.getElementById('sFormat').value;
+            var camp = document.getElementById('sCamp').value;
 
-            // Ambil format mime otomatis dari gambar yang diupload
-            const prodMime = document.getElementById('dataProd').getAttribute('data-mime') || "image/jpeg";
-            const modelMime = document.getElementById('dataModel').getAttribute('data-mime') || "image/jpeg";
+            var prodMime = document.getElementById('dataProd').getAttribute('data-mime') || "image/jpeg";
+            var modelMime = document.getElementById('dataModel').getAttribute('data-mime') || "image/jpeg";
 
-            let partsArray = [
+            var partsArray = [
                 { text: `Act as an Instagram Marketer. Analyze the product image provided. 
                 Product Detail: ${detail}. Target Audience: ${gen}, ${age}. Campaign: ${camp}. Output Format: ${format}.
                 ${source === 'CUSTOM' ? "I have also provided a second image of a human model. The final AI prompts MUST describe this specific human model wearing/using the product." : "Generate realistic AI human models in the prompts."}
@@ -197,27 +185,27 @@
             partsArray.push({ inlineData: { mimeType: prodMime, data: prodData } });
             if (source === 'CUSTOM') partsArray.push({ inlineData: { mimeType: modelMime, data: modelData } });
 
-            const key = KEYS[Math.floor(Math.random() * KEYS.length)];
+            var key = KEYS[Math.floor(Math.random() * KEYS.length)];
             
             try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
+                var response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ contents: [{ parts: partsArray }] })
                 });
 
-                const d = await response.json();
+                var d = await response.json();
                 if (!response.ok) throw new Error(d.error?.message || "Google Sibuk");
 
-                const txt = d.candidates.content.parts.text;
-                const ps = txt.split('[GAMBAR]');
-                const naskah = ps.replace('[NASKAH]', '').trim();
-                const pmpts = ps.match(/\d+\.\s*(.*)/g).map(p => p.replace(/\d+\.\s*/, '').trim());
+                var txt = d.candidates.content.parts.text;
+                var ps = txt.split('[GAMBAR]');
+                var naskah = ps.replace('[NASKAH]', '').trim();
+                var pmpts = ps.match(/\d+\.\s*(.*)/g).map(p => p.replace(/\d+\.\s*/, '').trim());
 
-                let w = 540, h = 960; if(format.includes("1:1")) { w = 800; h = 800; }
+                var w = 540, h = 960; if(format.includes("1:1")) { w = 800; h = 800; }
 
-                let html = `<div class="copy-card"><strong>NASKAH IKLAN:</strong><br><br>${naskah.replace(/\n/g, '<br>')}</div><div class="grid-photos">`;
+                var html = `<div class="copy-card"><strong>NASKAH IKLAN:</strong><br><br>${naskah.replace(/\n/g, '<br>')}</div><div class="grid-photos">`;
                 pmpts.forEach((p, i) => {
-                    const cleanP = encodeURIComponent(p.substring(0,120) + ", high quality, 8k resolution");
+                    var cleanP = encodeURIComponent(p.substring(0,120) + ", high quality, 8k resolution");
                     html += `<div class="photo-item"><img src="https://image.pollinations.ai/prompt/${cleanP}?width=${w}&height=${h}&nologo=true&seed=${Math.floor(Math.random()*999)}"><div class="meta">CONCEPT ${i+1}</div></div>`;
                 });
 
