@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CYZIO PRO V.10.2 | THE GRAND FINALE</title>
+    <title>CYZIO PRO V.10.3 | AUTO-PILOT AI</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #ff6b00; --bg-main: #050505; --bg-panel: #0a0a0a; --border: #1f1f1f; --text-dim: #94a3b8; }
@@ -40,7 +40,7 @@
 </head>
 <body>
     <aside class="sidebar">
-        <div class="header"><h1>CYZIO <span>PRO</span></h1><div class="dev-badge">V.10.2 THE GRAND FINALE</div></div>
+        <div class="header"><h1>CYZIO <span>PRO</span></h1><div class="dev-badge">V.10.3 AUTO-PILOT AI</div></div>
         <div class="form-area">
             
             <div>
@@ -96,7 +96,7 @@
                         if(mentah.includes(',')) {
                             mentah = mentah.split(',')[1];
                         }
-                        FOTO_PRODUK_MEMORY = mentah.replace(/[^A-Za-z0-9+/=]/g, ""); // Pembersihan Ekstra Ketat
+                        FOTO_PRODUK_MEMORY = mentah.replace(/[^A-Za-z0-9+/=]/g, ""); 
                         MIME_TYPE = blob.type || "image/jpeg";
                     };
                     reader.readAsDataURL(blob);
@@ -111,7 +111,7 @@
             var btn = document.getElementById('btnGen');
             var stts = document.getElementById('sysStatus');
             btn.disabled = true; btn.innerText = "MENGANALISIS...";
-            stts.innerHTML = "Menembus Server Google...";
+            stts.innerHTML = "Mencari Pintu Google...";
             document.getElementById('out').innerHTML = "<div style='text-align:center; margin-top:100px; color:#ff6b00; font-weight:800;'>MENGANALISIS DATA VISUAL...</div>";
 
             var d = document.getElementById('dInput').value || "Produk berkualitas premium";
@@ -133,17 +133,45 @@
 
             var key = KEYS[Math.floor(Math.random() * KEYS.length)];
             
+            // MESIN AUTO-PILOT: AKAN MENGETUK SEMUA PINTU SAMPAI ADA YANG TERBUKA
+            var mesinAI = ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-1.5-flash-001', 'gemini-1.5-flash-002', 'gemini-pro-vision'];
+            var suksesTembus = false;
+            var dataHasil = null;
+            var errorTerakhir = "";
+
+            for (var i = 0; i < mesinAI.length; i++) {
+                var namaMesin = mesinAI[i];
+                stts.innerHTML = `Mengetuk mesin: ${namaMesin}...`;
+                
+                try {
+                    var res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${namaMesin}:generateContent?key=${key}`, {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ contents: [{ parts: [{text: pr}, {inlineData: {mimeType: MIME_TYPE, data: FOTO_PRODUK_MEMORY}}] }] })
+                    });
+
+                    var dtTemp = await res.json();
+                    if (res.ok) {
+                        dataHasil = dtTemp;
+                        suksesTembus = true;
+                        break; // Jika berhasil, berhenti mengetuk pintu lain
+                    } else {
+                        errorTerakhir = dtTemp.error?.message || "Ditolak";
+                    }
+                } catch (e) {
+                    errorTerakhir = e.message;
+                }
+            }
+
+            if (!suksesTembus) {
+                stts.innerHTML = "Semua Pintu Ditolak!";
+                alert("API Key Bapak tidak diizinkan masuk ke semua mesin AI. SILAKAN KLIK TOMBOL GENERATE SEKALI LAGI untuk mencoba API Key yang lain! Error: " + errorTerakhir);
+                btn.disabled = false; btn.innerText = "🚀 GENERATE CONTENT";
+                return;
+            }
+
+            // JIKA TEMBUS, TAMPILKAN HASILNYA
             try {
-                // NAMA MESIN SUDAH DIKEMBALIKAN KE SETELAN PABRIK GOOGLE: gemini-1.5-flash
-                var res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: [{text: pr}, {inlineData: {mimeType: MIME_TYPE, data: FOTO_PRODUK_MEMORY}}] }] })
-                });
-
-                var dt = await res.json();
-                if (!res.ok) throw new Error(dt.error?.message || "Google Sibuk");
-
-                var txt = dt.candidates[0].content.parts[0].text;
+                var txt = dataHasil.candidates[0].content.parts[0].text;
                 var ps = txt.split('[GAMBAR]');
                 var naskah = ps[0].replace('[NASKAH]', '').trim();
                 var pmpts = ps[1].match(/\d+\.\s*(.*)/g).map(p => p.replace(/\d+\.\s*/, '').trim());
@@ -158,8 +186,7 @@
                 document.getElementById('out').innerHTML = html + "</div>";
                 stts.innerText = "Selesai!";
             } catch (e) {
-                stts.innerText = "Error!";
-                alert("Gagal menembus. Klik tombol GENERATE sekali lagi Pak: " + e.message);
+                alert("Gagal membaca hasil dari Google: " + e.message);
             }
             btn.disabled = false; btn.innerText = "🚀 GENERATE CONTENT";
         }
