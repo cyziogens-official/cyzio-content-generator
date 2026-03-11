@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CYZIO PRO V.10.3 | AUTO-PILOT AI</title>
+    <title>CYZIO PRO V.10.4 | KEY CRACKER</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #ff6b00; --bg-main: #050505; --bg-panel: #0a0a0a; --border: #1f1f1f; --text-dim: #94a3b8; }
@@ -31,7 +31,6 @@
         .photo-item { background: #000; border-radius: 15px; overflow: hidden; border: 1px solid #222; position: relative; }
         .photo-item img { width: 100%; height: 400px; object-fit: cover; }
         .photo-item .meta { position: absolute; bottom: 0; width: 100%; padding: 15px; background: linear-gradient(0deg, #000, transparent); font-size: 10px; font-weight: 800; color: #fff; text-align: center; }
-        
         .paste-box { width: 100%; height: 130px; border: 2px dashed #ff6b00; border-radius: 12px; background: rgba(255,107,0,0.05); display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: text; position: relative; overflow: hidden; outline: none; transition: 0.3s; }
         .paste-box:focus { background: rgba(255,107,0,0.15); border: 2px solid #ff6b00; box-shadow: 0 0 15px rgba(255,107,0,0.3); }
         .paste-box img { position: absolute; width: 100%; height: 100%; object-fit: cover; z-index: 5; display: none; }
@@ -40,9 +39,8 @@
 </head>
 <body>
     <aside class="sidebar">
-        <div class="header"><h1>CYZIO <span>PRO</span></h1><div class="dev-badge">V.10.3 AUTO-PILOT AI</div></div>
+        <div class="header"><h1>CYZIO <span>PRO</span></h1><div class="dev-badge">V.10.4 BRUTE-FORCE KEYS</div></div>
         <div class="form-area">
-            
             <div>
                 <div class="sec-title">01. FOTO PRODUK (JALUR PASTE)</div>
                 <div class="paste-box" id="pasteProd" tabindex="0">
@@ -81,21 +79,16 @@
         document.getElementById('pasteProd').addEventListener('paste', function(e) {
             e.preventDefault();
             var items = e.clipboardData.items;
-            
             for (var i = 0; i < items.length; i++) {
                 if (items[i].type.indexOf("image") !== -1) {
                     var blob = items[i].getAsFile();
                     var reader = new FileReader();
-                    
                     reader.onload = function(event) {
                         document.getElementById('imgProd').src = event.target.result;
                         document.getElementById('imgProd').style.display = 'block';
                         document.getElementById('txtProd').style.display = 'none';
-                        
                         var mentah = event.target.result;
-                        if(mentah.includes(',')) {
-                            mentah = mentah.split(',')[1];
-                        }
+                        if(mentah.includes(',')) mentah = mentah.split(',')[1];
                         FOTO_PRODUK_MEMORY = mentah.replace(/[^A-Za-z0-9+/=]/g, ""); 
                         MIME_TYPE = blob.type || "image/jpeg";
                     };
@@ -110,9 +103,7 @@
 
             var btn = document.getElementById('btnGen');
             var stts = document.getElementById('sysStatus');
-            btn.disabled = true; btn.innerText = "MENGANALISIS...";
-            stts.innerHTML = "Mencari Pintu Google...";
-            document.getElementById('out').innerHTML = "<div style='text-align:center; margin-top:100px; color:#ff6b00; font-weight:800;'>MENGANALISIS DATA VISUAL...</div>";
+            btn.disabled = true; 
 
             var d = document.getElementById('dInput').value || "Produk berkualitas premium";
             var g = document.getElementById('sGen').value;
@@ -131,29 +122,30 @@
             4. (English prompt for AI image generator, photorealistic)
             5. (English prompt for AI image generator, photorealistic)`;
 
-            var key = KEYS[Math.floor(Math.random() * KEYS.length)];
-            
-            // MESIN AUTO-PILOT: AKAN MENGETUK SEMUA PINTU SAMPAI ADA YANG TERBUKA
-            var mesinAI = ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-1.5-flash-001', 'gemini-1.5-flash-002', 'gemini-pro-vision'];
+            document.getElementById('out').innerHTML = "<div style='text-align:center; margin-top:100px; color:#ff6b00; font-weight:800;'>MENCARI KUNCI API YANG MASIH HIDUP...</div>";
+
             var suksesTembus = false;
             var dataHasil = null;
             var errorTerakhir = "";
 
-            for (var i = 0; i < mesinAI.length; i++) {
-                var namaMesin = mesinAI[i];
-                stts.innerHTML = `Mengetuk mesin: ${namaMesin}...`;
+            // LOOPING MENGHAJAR SEMUA 28 KUNCI SATU PER SATU
+            for (var i = 0; i < KEYS.length; i++) {
+                var currentKey = KEYS[i].trim();
+                btn.innerText = `MENCOBA KUNCI ${i+1}/28...`;
+                stts.innerHTML = `Mengetes API Key ke-${i+1}...`;
                 
                 try {
-                    var res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${namaMesin}:generateContent?key=${key}`, {
+                    var res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${currentKey}`, {
                         method: 'POST', headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ contents: [{ parts: [{text: pr}, {inlineData: {mimeType: MIME_TYPE, data: FOTO_PRODUK_MEMORY}}] }] })
                     });
 
                     var dtTemp = await res.json();
+                    
                     if (res.ok) {
                         dataHasil = dtTemp;
                         suksesTembus = true;
-                        break; // Jika berhasil, berhenti mengetuk pintu lain
+                        break; // KUNCI DITEMUKAN! HENTIKAN PENCARIAN!
                     } else {
                         errorTerakhir = dtTemp.error?.message || "Ditolak";
                     }
@@ -163,14 +155,16 @@
             }
 
             if (!suksesTembus) {
-                stts.innerHTML = "Semua Pintu Ditolak!";
-                alert("API Key Bapak tidak diizinkan masuk ke semua mesin AI. SILAKAN KLIK TOMBOL GENERATE SEKALI LAGI untuk mencoba API Key yang lain! Error: " + errorTerakhir);
+                stts.innerHTML = "Semua Kunci Mati!";
+                alert("INFO PENTING: Seluruh 28 API Key Bapak ternyata sudah tidak memiliki akses ke Mesin AI Google (Mungkin limit atau belum diaktifkan). Silakan buat 1 API Key baru besok pagi. Error Terakhir: " + errorTerakhir);
                 btn.disabled = false; btn.innerText = "🚀 GENERATE CONTENT";
+                document.getElementById('out').innerHTML = "";
                 return;
             }
 
-            // JIKA TEMBUS, TAMPILKAN HASILNYA
+            // JIKA ADA 1 KUNCI YANG TEMBUS:
             try {
+                stts.innerHTML = "Kunci Ditemukan! Merakit Hasil...";
                 var txt = dataHasil.candidates[0].content.parts[0].text;
                 var ps = txt.split('[GAMBAR]');
                 var naskah = ps[0].replace('[NASKAH]', '').trim();
@@ -184,9 +178,9 @@
                     html += `<div class="photo-item"><img src="https://image.pollinations.ai/prompt/${cleanP}?width=${w}&height=${h}&nologo=true&seed=${Math.floor(Math.random()*999)}"><div class="meta">VISUAL CONCEPT ${i+1}</div></div>`;
                 });
                 document.getElementById('out').innerHTML = html + "</div>";
-                stts.innerText = "Selesai!";
+                stts.innerText = "Generasi Sukses!";
             } catch (e) {
-                alert("Gagal membaca hasil dari Google: " + e.message);
+                alert("Gagal memecah hasil: " + e.message);
             }
             btn.disabled = false; btn.innerText = "🚀 GENERATE CONTENT";
         }
