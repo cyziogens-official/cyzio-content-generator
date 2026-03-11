@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CYZIO PRO V.10.4 | KEY CRACKER</title>
+    <title>CYZIO PRO V.10.5 | GEMINI 2.5 UPDATE</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #ff6b00; --bg-main: #050505; --bg-panel: #0a0a0a; --border: #1f1f1f; --text-dim: #94a3b8; }
@@ -39,7 +39,7 @@
 </head>
 <body>
     <aside class="sidebar">
-        <div class="header"><h1>CYZIO <span>PRO</span></h1><div class="dev-badge">V.10.4 BRUTE-FORCE KEYS</div></div>
+        <div class="header"><h1>CYZIO <span>PRO</span></h1><div class="dev-badge">V.10.5 GEMINI 2.5 ENGINE</div></div>
         <div class="form-area">
             <div>
                 <div class="sec-title">01. FOTO PRODUK (JALUR PASTE)</div>
@@ -122,49 +122,56 @@
             4. (English prompt for AI image generator, photorealistic)
             5. (English prompt for AI image generator, photorealistic)`;
 
-            document.getElementById('out').innerHTML = "<div style='text-align:center; margin-top:100px; color:#ff6b00; font-weight:800;'>MENCARI KUNCI API YANG MASIH HIDUP...</div>";
+            document.getElementById('out').innerHTML = "<div style='text-align:center; margin-top:100px; color:#ff6b00; font-weight:800;'>MENGHUBUNGI MESIN GOOGLE TERBARU...</div>";
 
             var suksesTembus = false;
             var dataHasil = null;
             var errorTerakhir = "";
+            
+            // UPDATE 2026: Mesin khusus untuk API Key Fresh
+            var daftarMesinBaru = ['gemini-2.5-flash', 'gemini-2.0-flash'];
 
-            // LOOPING MENGHAJAR SEMUA 28 KUNCI SATU PER SATU
             for (var i = 0; i < KEYS.length; i++) {
                 var currentKey = KEYS[i].trim();
-                btn.innerText = `MENCOBA KUNCI ${i+1}/28...`;
-                stts.innerHTML = `Mengetes API Key ke-${i+1}...`;
                 
-                try {
-                    var res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${currentKey}`, {
-                        method: 'POST', headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ contents: [{ parts: [{text: pr}, {inlineData: {mimeType: MIME_TYPE, data: FOTO_PRODUK_MEMORY}}] }] })
-                    });
-
-                    var dtTemp = await res.json();
+                for(var m = 0; m < daftarMesinBaru.length; m++) {
+                    var mesinPilihan = daftarMesinBaru[m];
+                    btn.innerText = `KUNCI ${i+1} ➔ MESIN ${mesinPilihan.toUpperCase()}`;
+                    stts.innerHTML = `Mengetes koneksi...`;
                     
-                    if (res.ok) {
-                        dataHasil = dtTemp;
-                        suksesTembus = true;
-                        break; // KUNCI DITEMUKAN! HENTIKAN PENCARIAN!
-                    } else {
-                        errorTerakhir = dtTemp.error?.message || "Ditolak";
+                    try {
+                        var res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${mesinPilihan}:generateContent?key=${currentKey}`, {
+                            method: 'POST', headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ contents: [{ parts: [{text: pr}, {inlineData: {mimeType: MIME_TYPE, data: FOTO_PRODUK_MEMORY}}] }] })
+                        });
+
+                        var dtTemp = await res.json();
+                        
+                        if (res.ok) {
+                            dataHasil = dtTemp;
+                            suksesTembus = true;
+                            break; // HENTIKAN PENCARIAN MESIN
+                        } else {
+                            errorTerakhir = dtTemp.error?.message || "Ditolak";
+                        }
+                    } catch (e) {
+                        errorTerakhir = e.message;
                     }
-                } catch (e) {
-                    errorTerakhir = e.message;
                 }
+                if (suksesTembus) break; // HENTIKAN PENCARIAN KUNCI
             }
 
             if (!suksesTembus) {
-                stts.innerHTML = "Semua Kunci Mati!";
-                alert("INFO PENTING: Seluruh 28 API Key Bapak ternyata sudah tidak memiliki akses ke Mesin AI Google (Mungkin limit atau belum diaktifkan). Silakan buat 1 API Key baru besok pagi. Error Terakhir: " + errorTerakhir);
+                stts.innerHTML = "Gagal Menembus Google!";
+                alert("Ya ampun, Google masih menolak! Error: " + errorTerakhir);
                 btn.disabled = false; btn.innerText = "🚀 GENERATE CONTENT";
                 document.getElementById('out').innerHTML = "";
                 return;
             }
 
-            // JIKA ADA 1 KUNCI YANG TEMBUS:
+            // JIKA TEMBUS, LANGSUNG TAMPILKAN!
             try {
-                stts.innerHTML = "Kunci Ditemukan! Merakit Hasil...";
+                stts.innerHTML = "Berhasil! Merakit Hasil...";
                 var txt = dataHasil.candidates[0].content.parts[0].text;
                 var ps = txt.split('[GAMBAR]');
                 var naskah = ps[0].replace('[NASKAH]', '').trim();
