@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CYZIO PRO V.9.7 | Anti Block</title>
+    <title>CYZIO PRO V.9.8 | Anti-Hijack Mode</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #ff6b00; --bg-main: #050505; --bg-panel: #0a0a0a; --border: #1f1f1f; --text-dim: #94a3b8; }
@@ -15,7 +15,7 @@
         .header h1 span { color: var(--primary); }
         .form-area { flex: 1; overflow-y: auto; padding: 25px; display: flex; flex-direction: column; gap: 20px; }
         .sec-title { font-size: 10px; font-weight: 800; color: var(--primary); letter-spacing: 1.5px; margin-bottom: 10px; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 5px; }
-        .input-box { width: 100%; background: #000; border: 1px solid #222; border-radius: 10px; padding: 12px 15px; color: #fff; font-size: 13px; outline: none; transition: 0.3s; }
+        .input-box { width: 100%; background: #000; border: 1px solid #222; border-radius: 10px; padding: 12px 15px; color: #fff; font-size: 13px; outline: none; transition: 0.3s; margin-bottom: 10px; }
         .input-box:focus { border-color: var(--primary); }
         textarea.input-box { resize: none; height: 70px; }
         .row { display: flex; gap: 15px; }
@@ -32,186 +32,120 @@
         .photo-item { background: #000; border-radius: 15px; overflow: hidden; border: 1px solid #222; position: relative; }
         .photo-item img { width: 100%; height: 400px; object-fit: cover; }
         .photo-item .meta { position: absolute; bottom: 0; width: 100%; padding: 15px; background: linear-gradient(0deg, #000, transparent); font-size: 10px; font-weight: 800; color: #fff; text-align: center; letter-spacing: 1px; }
-
-        /* GAYA TOMBOL TELANJANG */
-        .raw-input { display: block; width: 100%; padding: 15px; background: #fff; color: #000; font-weight: bold; border-radius: 8px; cursor: pointer; margin-bottom: 10px; }
-        .img-preview-box { width: 100%; max-height: 200px; object-fit: cover; border-radius: 8px; border: 2px solid var(--primary); display: none; margin-bottom: 10px; }
     </style>
 </head>
 <body>
-
     <aside class="sidebar">
-        <div class="header">
-            <h1>CYZIO <span>PRO</span></h1>
-            <div class="dev-badge">V.9.7 RAW MODE</div>
-        </div>
-        
+        <div class="header"><h1>CYZIO <span>PRO</span></h1><div class="dev-badge">V.9.8 ANTI-HIJACK</div></div>
         <div class="form-area">
-            <div style="background: rgba(255,107,0,0.1); padding: 15px; border-radius: 10px; border: 1px solid var(--primary);">
-                <div class="sec-title" style="color: #fff;">01. UPLOAD FOTO PRODUK</div>
-                
-                <input type="file" class="raw-input" accept="image/*" onchange="bacaFotoBrutal(this, 'imgProd', 'dataProd')">
-                <img id="imgProd" class="img-preview-box">
-                <input type="hidden" id="dataProd" data-mime="image/jpeg">
-                
-                <textarea id="dInput" class="input-box" placeholder="Detail/Keunggulan produk..."></textarea>
+            <div style="background: #111; padding: 15px; border-radius: 10px; border: 1px solid var(--primary);">
+                <div class="sec-title">01. UPLOAD FOTO PRODUK</div>
+                <input type="file" id="fProd" accept="image/*" style="display: block; width: 100%; background: #fff; padding: 10px; border-radius: 5px; color: #000; cursor: pointer;">
+                <img id="imgProd" style="display:none; width:100%; margin-top:10px; border-radius:5px; border: 1px solid var(--primary);">
+                <input type="hidden" id="dataProd">
             </div>
 
             <div>
-                <div class="sec-title">02. TALENT & MODEL</div>
-                <div class="row" style="margin-bottom:10px;">
-                    <div class="col">
-                        <select id="sSource" class="input-box" onchange="toggleModel()">
-                            <option value="AI">AI Generated Talent</option>
-                            <option value="CUSTOM">Upload Model Sendiri</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div id="cardModel" style="display:none; background: #111; padding: 15px; border-radius: 10px; border: 1px dashed #444; margin-bottom: 10px;">
-                    <label style="font-size: 11px; color: var(--text-dim); margin-bottom: 5px; display: block;">UPLOAD FOTO MODEL (OPSIONAL):</label>
-                    <input type="file" class="raw-input" accept="image/*" onchange="bacaFotoBrutal(this, 'imgModel', 'dataModel')">
-                    <img id="imgModel" class="img-preview-box">
-                    <input type="hidden" id="dataModel" data-mime="image/jpeg">
-                </div>
-
+                <div class="sec-title" style="margin-top:10px;">02. STRATEGI IKLAN</div>
+                <textarea id="dInput" class="input-box" placeholder="Detail produk..."></textarea>
                 <div class="row">
-                    <div class="col"><label>Gender</label><select id="sGen" class="input-box"><option>Wanita</option><option>Pria</option><option>Couple</option></select></div>
-                    <div class="col"><label>Usia</label><select id="sAge" class="input-box"><option>20-an Tahun</option><option>30-an Tahun</option><option>Remaja</option></select></div>
+                    <div class="col"><label>Gender</label><select id="sGen" class="input-box"><option>Wanita</option><option>Pria</option></select></div>
+                    <div class="col"><label>Usia</label><select id="sAge" class="input-box"><option>20-an Tahun</option><option>30-an Tahun</option></select></div>
                 </div>
-            </div>
-
-            <div>
-                <div class="sec-title">03. OUTPUT ENGINE</div>
                 <div class="row">
                     <div class="col"><label>Format</label><select id="sFormat" class="input-box"><option>9:16 (Vertical)</option><option>1:1 (Square)</option></select></div>
                     <div class="col"><label>Campaign</label><select id="sCamp" class="input-box"><option>Soft Selling</option><option>Hard Promo</option></select></div>
                 </div>
             </div>
 
-            <button class="btn-gen" id="btnGen" onclick="generate()">🚀 Generate Content</button>
+            <button class="btn-gen" id="btnGen" onclick="generate()">🚀 GENERATE CONTENT</button>
         </div>
     </aside>
 
     <main class="main">
-        <div class="top-bar">
-            <div class="ws-title">Active Workspace</div>
-            <div class="status" id="sysStatus">Ready</div>
-        </div>
-        <div id="out">
-            <div style="text-align:center; margin-top:100px; color:#333; font-size:14px; font-weight:600;">
-                SILAKAN UPLOAD GAMBAR DAN SETTING STRATEGI
-            </div>
-        </div>
+        <div class="top-bar"><div class="ws-title">Workspace</div><div class="status" id="sysStatus">Ready</div></div>
+        <div id="out"><div style="text-align:center; margin-top:100px; color:#333; font-weight:600;">MENUNGGU FOTO DAN INSTRUKSI</div></div>
     </main>
 
-    <script>
+    <script data-cfasync="false">
         const KEYS = "AIzaSyA2Ox-W1IykjypH2J8lC6pDL--SaX1ogYA,AIzaSyAR9bP_4FSzAYfOWr4r-CrNXLeMAW3id80,AIzaSyDpwSlrdXqXYeUl-4xzZvr6VR74IG13dJI,AIzaSyAK_yHQFz_JCKE-wwYYQHIygmTYePUbwH4,AIzaSyB6Qa53GBXRRE2U8LVsWVXJ5RqUtDVUbCE,AIzaSyDiSIyfHMKIHf1tKhdEVQSfaU6SIihpChY,AIzaSyCsd72jfw7ulgmx_X-Ij_H5ZWc6nBzlgmk,AIzaSyDtRT_cEu5dp0nifcoAtPJ50Z3lDyXxLlY,AIzaSyAylMIUNaSuAauiPIKY2gUmcjJgh9fB350,AIzaSyAf5F4m2e8ITPJInPz3G6WpK-c5BK8zk08,AIzaSyA8KmL762stiDW5FbrYRUwrb-OGG2FJ6p4,AIzaSyCM3575RAXEtOTQXqOtCECWJAi6UR043fA,AIzaSyDMP4xbzx8D6JfOUqO33PGQhw6NoDM0Rm8,AIzaSyD-dc6b9NDklmD2uzlHm4Vgp82xk4afLdo,AIzaSyBy0rkdB7Q8UP810H0inT5MJqE9SAnEpZU,AIzaSyBFlo6ABw57bI1Q9fu7g5po0x0Db_XS_Bk,AIzaSyAydiilFPeJRdLvVGhRioTIKIRLYPAJcCY,AIzaSyA434055s8T4RWk_Es8eJv9NJ2VVAeo3qw,AIzaSyCaUqSEaQwz9ifVfpavsMtP0WBAN48p1Mc,AIzaSyDk2vzFGZgDVnxToB5qvuS8NyY-F2BK5g8,AIzaSyA54ihDYd2zCRU1aZA0fG3t_ATTUtx3BXM,AIzaSyDZWF67DHuMlcEfk7mkhfNLqhGgD3xI4zs,AIzaSyDeZKUJ2z9a4MVpyY_piReKAov9hZG1Jn8,AIzaSyDdhgbYr87HwKU_s08Z6b-Wngvpfqelc88,AIzaSyDDToIfvQdGGG3DvPij_vmVWqyXLYS7WoY,AIzaSyBjHDOM0iNfUA4Sn1drPLRxc_d8xC_TrnI,AIzaSyBcg_nvYs8Cvn6eSil4Td52zEEg_J3Oh7E,AIzaSyB0aqD83OQ2Cp36Hj-8ofa7oWqEq5Kgvow".split(',');
 
-        // FUNGSI BACA FOTO DENGAN DETEKSI ALARM TAHAP DEMI TAHAP
-        function bacaFotoBrutal(inputElem, imgId, dataId) {
-            alert("[TAHAP 1] Tombol berhasil direspon browser!"); // Alarm 1
+        document.getElementById('fProd').addEventListener('change', function() {
+            var inputFisik = document.getElementById('fProd');
+            var file = inputFisik.files;
             
-            var file = inputElem.files;
-            if (!file) {
-                alert("File batal dipilih!");
+            if (!file) return;
+
+            // DETEKSI PEMBAJAKAN FILE
+            if (typeof file.name === 'undefined') {
+                alert("🚨 PERINGATAN KRITIS: Browser Google Chrome Anda sedang memblokir sistem baca file (kemungkinan karena Ekstensi Adblock/Translate). TOLONG BUKA WEB INI MENGGUNAKAN BROWSER MICROSOFT EDGE!");
                 return;
             }
 
-            alert("[TAHAP 2] Membaca file: " + file.name); // Alarm 2
-
             var reader = new FileReader();
             reader.onload = function(e) {
-                document.getElementById(imgId).src = e.target.result;
-                document.getElementById(imgId).style.display = 'block';
-                
-                document.getElementById(dataId).value = e.target.result.split(',');
-                document.getElementById(dataId).setAttribute('data-mime', file.type || 'image/jpeg');
-                
-                alert("[TAHAP 3] FOTO SUKSES MASUK SISTEM!"); // Alarm 3
+                document.getElementById('imgProd').src = e.target.result;
+                document.getElementById('imgProd').style.display = 'block';
+                document.getElementById('dataProd').value = e.target.result.split(',');
             };
-            reader.onerror = function() {
-                alert("ERROR: Browser gagal membaca file ini.");
-            }
             reader.readAsDataURL(file);
-        }
-
-        function toggleModel() {
-            var val = document.getElementById('sSource').value;
-            document.getElementById('cardModel').style.display = (val === 'CUSTOM') ? 'block' : 'none';
-        }
+        });
 
         async function generate() {
             var prodData = document.getElementById('dataProd').value;
-            var modelData = document.getElementById('dataModel').value;
-            var source = document.getElementById('sSource').value;
-            
             if(!prodData) return alert("Bapak wajib upload Foto Produk dulu!");
-            if(source === 'CUSTOM' && !modelData) return alert("Bapak wajib upload Foto Model juga!");
 
             var btn = document.getElementById('btnGen');
             var stts = document.getElementById('sysStatus');
-            btn.disabled = true; btn.innerText = "Menganalisis Data...";
+            btn.disabled = true; btn.innerText = "MENGANALISIS...";
             stts.className = "status loading"; stts.innerText = "Menembus Server Google...";
             document.getElementById('out').innerHTML = "<div style='text-align:center; margin-top:100px; color:#ff6b00; font-weight:800;'>MENGANALISIS DATA VISUAL...</div>";
 
-            var detail = document.getElementById('dInput').value || "Produk terbaik";
-            var gen = document.getElementById('sGen').value;
-            var age = document.getElementById('sAge').value;
-            var format = document.getElementById('sFormat').value;
-            var camp = document.getElementById('sCamp').value;
+            var d = document.getElementById('dInput').value || "Produk terbaik";
+            var g = document.getElementById('sGen').value;
+            var a = document.getElementById('sAge').value;
+            var f = document.getElementById('sFormat').value;
+            var c = document.getElementById('sCamp').value;
 
-            var prodMime = document.getElementById('dataProd').getAttribute('data-mime') || "image/jpeg";
-            var modelMime = document.getElementById('dataModel').getAttribute('data-mime') || "image/jpeg";
-
-            var partsArray = [
-                { text: `Act as an Instagram Marketer. Analyze the product image provided. 
-                Product Detail: ${detail}. Target Audience: ${gen}, ${age}. Campaign: ${camp}. Output Format: ${format}.
-                ${source === 'CUSTOM' ? "I have also provided a second image of a human model. The final AI prompts MUST describe this specific human model wearing/using the product." : "Generate realistic AI human models in the prompts."}
-                
-                Format Exactly Like This:
-                [NASKAH]
-                (Write 1 engaging Instagram caption in Indonesian)
-                [GAMBAR]
-                1. (English prompt for AI image generator)
-                2. (Prompt 2)
-                3. (Prompt 3)
-                4. (Prompt 4)
-                5. (Prompt 5)` }
-            ];
-
-            partsArray.push({ inlineData: { mimeType: prodMime, data: prodData } });
-            if (source === 'CUSTOM') partsArray.push({ inlineData: { mimeType: modelMime, data: modelData } });
+            var pr = `Analyze product image. Detail: ${d}. Audience: ${g}, ${a}. Campaign: ${c}. Format: ${f}. Generate realistic AI human models.
+            Output exactly:
+            [NASKAH]
+            (1 Indonesian IG caption)
+            [GAMBAR]
+            1. (English prompt)
+            2. (English prompt)
+            3. (English prompt)
+            4. (English prompt)
+            5. (English prompt)`;
 
             var key = KEYS[Math.floor(Math.random() * KEYS.length)];
             
             try {
-                var response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
+                var res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: partsArray }] })
+                    body: JSON.stringify({ contents: [{ parts: [{text: pr}, {inlineData: {mimeType: "image/jpeg", data: prodData}}] }] })
                 });
 
-                var d = await response.json();
-                if (!response.ok) throw new Error(d.error?.message || "Google Sibuk");
+                var dt = await res.json();
+                if (!res.ok) throw new Error(dt.error?.message || "Google Sibuk");
 
-                var txt = d.candidates.content.parts.text;
+                var txt = dt.candidates.content.parts.text;
                 var ps = txt.split('[GAMBAR]');
                 var naskah = ps.replace('[NASKAH]', '').trim();
                 var pmpts = ps.match(/\d+\.\s*(.*)/g).map(p => p.replace(/\d+\.\s*/, '').trim());
 
-                var w = 540, h = 960; if(format.includes("1:1")) { w = 800; h = 800; }
+                var w = 540, h = 960; if(f.includes("1:1")) { w = 800; h = 800; }
 
                 var html = `<div class="copy-card"><strong>NASKAH IKLAN:</strong><br><br>${naskah.replace(/\n/g, '<br>')}</div><div class="grid-photos">`;
                 pmpts.forEach((p, i) => {
                     var cleanP = encodeURIComponent(p.substring(0,120) + ", high quality, 8k resolution");
                     html += `<div class="photo-item"><img src="https://image.pollinations.ai/prompt/${cleanP}?width=${w}&height=${h}&nologo=true&seed=${Math.floor(Math.random()*999)}"><div class="meta">CONCEPT ${i+1}</div></div>`;
                 });
-
                 document.getElementById('out').innerHTML = html + "</div>";
                 stts.className = "status"; stts.innerText = "Selesai!";
             } catch (e) {
                 stts.className = "status loading"; stts.innerText = "Error!";
-                alert("Klik sekali lagi Pak: " + e.message);
+                alert("Klik lagi Pak: " + e.message);
             }
             btn.disabled = false; btn.innerText = "🚀 GENERATE CONTENT";
         }
