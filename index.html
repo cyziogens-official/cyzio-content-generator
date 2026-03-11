@@ -58,7 +58,7 @@
                     <div id="txtProd" style="text-align:center; color:var(--text-dim); font-size:11px; font-weight:600;">📷 Klik Upload Foto Produk</div>
                     <img id="imgProd" class="preview-img">
                 </label>
-                <input type="hidden" id="dataProd">
+                <input type="hidden" id="dataProd" data-mime="">
                 <textarea id="dInput" class="input-box" style="margin-top:10px;" placeholder="Detail/Keunggulan produk..."></textarea>
             </div>
 
@@ -79,7 +79,7 @@
                     <div id="txtModel" style="text-align:center; color:var(--primary); font-size:11px; font-weight:600;">🙎‍♀️ Klik Upload Foto Model</div>
                     <img id="imgModel" class="preview-img">
                 </label>
-                <input type="hidden" id="dataModel">
+                <input type="hidden" id="dataModel" data-mime="">
 
                 <div class="row">
                     <div class="col"><label>Gender</label><select id="sGen" class="input-box"><option>Wanita</option><option>Pria</option><option>Couple</option></select></div>
@@ -114,7 +114,6 @@
     <script>
         const KEYS = "AIzaSyA2Ox-W1IykjypH2J8lC6pDL--SaX1ogYA,AIzaSyAR9bP_4FSzAYfOWr4r-CrNXLeMAW3id80,AIzaSyDpwSlrdXqXYeUl-4xzZvr6VR74IG13dJI,AIzaSyAK_yHQFz_JCKE-wwYYQHIygmTYePUbwH4,AIzaSyB6Qa53GBXRRE2U8LVsWVXJ5RqUtDVUbCE,AIzaSyDiSIyfHMKIHf1tKhdEVQSfaU6SIihpChY,AIzaSyCsd72jfw7ulgmx_X-Ij_H5ZWc6nBzlgmk,AIzaSyDtRT_cEu5dp0nifcoAtPJ50Z3lDyXxLlY,AIzaSyAylMIUNaSuAauiPIKY2gUmcjJgh9fB350,AIzaSyAf5F4m2e8ITPJInPz3G6WpK-c5BK8zk08,AIzaSyA8KmL762stiDW5FbrYRUwrb-OGG2FJ6p4,AIzaSyCM3575RAXEtOTQXqOtCECWJAi6UR043fA,AIzaSyDMP4xbzx8D6JfOUqO33PGQhw6NoDM0Rm8,AIzaSyD-dc6b9NDklmD2uzlHm4Vgp82xk4afLdo,AIzaSyBy0rkdB7Q8UP810H0inT5MJqE9SAnEpZU,AIzaSyBFlo6ABw57bI1Q9fu7g5po0x0Db_XS_Bk,AIzaSyAydiilFPeJRdLvVGhRioTIKIRLYPAJcCY,AIzaSyA434055s8T4RWk_Es8eJv9NJ2VVAeo3qw,AIzaSyCaUqSEaQwz9ifVfpavsMtP0WBAN48p1Mc,AIzaSyDk2vzFGZgDVnxToB5qvuS8NyY-F2BK5g8,AIzaSyA54ihDYd2zCRU1aZA0fG3t_ATTUtx3BXM,AIzaSyDZWF67DHuMlcEfk7mkhfNLqhGgD3xI4zs,AIzaSyDeZKUJ2z9a4MVpyY_piReKAov9hZG1Jn8,AIzaSyDdhgbYr87HwKU_s08Z6b-Wngvpfqelc88,AIzaSyDDToIfvQdGGG3DvPij_vmVWqyXLYS7WoY,AIzaSyBjHDOM0iNfUA4Sn1drPLRxc_d8xC_TrnI,AIzaSyBcg_nvYs8Cvn6eSil4Td52zEEg_J3Oh7E,AIzaSyB0aqD83OQ2Cp36Hj-8ofa7oWqEq5Kgvow".split(',');
 
-        // DETEKSI OTOMATIS SAAT FOTO DIPILIH (ANTI ERROR BLOB)
         document.getElementById('fProdInput').addEventListener('change', function(e) {
             processImage(e.target.files, 'imgProd', 'txtProd', 'dataProd');
         });
@@ -124,28 +123,30 @@
         });
 
         function processImage(file, imgId, txtId, dataId) {
-            if (!file) return; // Jika batal pilih foto, hentikan
-            
-            // Pengecekan aman: Pastikan yang dipilih benar-benar Blob/File gambar
-            if (!(file instanceof Blob)) {
-                alert("Sistem gagal membaca format file ini. Mohon gunakan foto JPG/PNG biasa.");
-                return;
-            }
+            if (!file) return;
 
+            // Pengecekan ukuran saja (Maks 4MB untuk API Google)
             if(file.size > 4 * 1024 * 1024) {
-                alert("Ukuran gambar ini terlalu besar (Maks 4MB). Silakan di-screenshot dulu fotonya, lalu upload hasil screenshot-nya ya Pak.");
+                alert("Ukuran file maksimal 4MB Pak. Tolong screenshot fotonya saja, lalu upload hasil screenshot-nya agar ringan.");
                 return;
             }
 
             const reader = new FileReader();
             reader.onload = function(e) {
-                document.getElementById(dataId).value = e.target.result.split(',');
+                const base64String = e.target.result.split(',');
+                // Otomatis tangkap format apa pun yang dimasukkan Bapak (jpg/png/webp dll)
+                const mimeType = file.type || "image/jpeg"; 
+
+                const hiddenInput = document.getElementById(dataId);
+                hiddenInput.value = base64String;
+                hiddenInput.setAttribute('data-mime', mimeType);
+
                 document.getElementById(imgId).src = e.target.result;
                 document.getElementById(imgId).style.display = 'block';
                 document.getElementById(txtId).style.display = 'none';
             };
-            reader.onerror = function() { alert("Gagal membaca gambar. Coba gambar lain."); };
-            reader.readAsDataURL(file); // Ini yang tadi bikin error, sekarang sudah dilindungi Blob check!
+            reader.onerror = function() { alert("Gagal membaca gambar."); };
+            reader.readAsDataURL(file); 
         }
 
         function toggleModel() {
@@ -173,6 +174,10 @@
             const format = document.getElementById('sFormat').value;
             const camp = document.getElementById('sCamp').value;
 
+            // Ambil format mime otomatis dari gambar yang diupload
+            const prodMime = document.getElementById('dataProd').getAttribute('data-mime') || "image/jpeg";
+            const modelMime = document.getElementById('dataModel').getAttribute('data-mime') || "image/jpeg";
+
             let partsArray = [
                 { text: `Act as an Instagram Marketer. Analyze the product image provided. 
                 Product Detail: ${detail}. Target Audience: ${gen}, ${age}. Campaign: ${camp}. Output Format: ${format}.
@@ -189,8 +194,8 @@
                 5. (Prompt 5)` }
             ];
 
-            partsArray.push({ inlineData: { mimeType: "image/jpeg", data: prodData } });
-            if (source === 'CUSTOM') partsArray.push({ inlineData: { mimeType: "image/jpeg", data: modelData } });
+            partsArray.push({ inlineData: { mimeType: prodMime, data: prodData } });
+            if (source === 'CUSTOM') partsArray.push({ inlineData: { mimeType: modelMime, data: modelData } });
 
             const key = KEYS[Math.floor(Math.random() * KEYS.length)];
             
