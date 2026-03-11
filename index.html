@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CYZIO PRO V.9.9 | THE ULTIMATE BYPASS</title>
+    <title>CYZIO PRO V.9.9.1 | PERFECT BYPASS</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #ff6b00; --bg-main: #050505; --bg-panel: #0a0a0a; --border: #1f1f1f; --text-dim: #94a3b8; }
@@ -30,7 +30,6 @@
         .photo-item img { width: 100%; height: 400px; object-fit: cover; }
         .photo-item .meta { position: absolute; bottom: 0; width: 100%; padding: 15px; background: linear-gradient(0deg, #000, transparent); font-size: 10px; font-weight: 800; color: #fff; text-align: center; }
         
-        /* KOTAK PASTE (SENJATA RAHASIA) */
         .paste-box { width: 100%; height: 130px; border: 2px dashed #ff6b00; border-radius: 12px; background: rgba(255,107,0,0.05); display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: text; position: relative; overflow: hidden; outline: none; transition: 0.3s; }
         .paste-box:focus { background: rgba(255,107,0,0.15); border: 2px solid #ff6b00; box-shadow: 0 0 15px rgba(255,107,0,0.3); }
         .paste-box img { position: absolute; width: 100%; height: 100%; object-fit: cover; z-index: 5; display: none; }
@@ -39,13 +38,13 @@
 </head>
 <body>
     <aside class="sidebar">
-        <div class="header"><h1>CYZIO <span>PRO</span></h1><div class="dev-badge">V.9.9 JALUR PASTE (ANTI BAJAK)</div></div>
+        <div class="header"><h1>CYZIO <span>PRO</span></h1><div class="dev-badge">V.9.9.1 PERFECT BYPASS</div></div>
         <div class="form-area">
             
             <div>
                 <div class="sec-title">01. FOTO PRODUK (JALUR PASTE)</div>
                 <div class="paste-box" id="pasteProd" tabindex="0">
-                    <div class="text" id="txtProd">KLIK KOTAK INI<br>LALU TEKAN <strong>(CTRL + V)</strong><br><span style="font-size:9px; color:#999; display:block; margin-top:5px;">*Copy dulu fotonya dari folder komputer Bapak</span></div>
+                    <div class="text" id="txtProd">KLIK KOTAK INI<br>LALU TEKAN <strong>(CTRL + V)</strong></div>
                     <img id="imgProd">
                 </div>
                 <input type="hidden" id="dataProd">
@@ -75,15 +74,12 @@
     <script>
         const KEYS = "AIzaSyA2Ox-W1IykjypH2J8lC6pDL--SaX1ogYA,AIzaSyAR9bP_4FSzAYfOWr4r-CrNXLeMAW3id80,AIzaSyDpwSlrdXqXYeUl-4xzZvr6VR74IG13dJI,AIzaSyAK_yHQFz_JCKE-wwYYQHIygmTYePUbwH4,AIzaSyB6Qa53GBXRRE2U8LVsWVXJ5RqUtDVUbCE,AIzaSyDiSIyfHMKIHf1tKhdEVQSfaU6SIihpChY,AIzaSyCsd72jfw7ulgmx_X-Ij_H5ZWc6nBzlgmk,AIzaSyDtRT_cEu5dp0nifcoAtPJ50Z3lDyXxLlY,AIzaSyAylMIUNaSuAauiPIKY2gUmcjJgh9fB350,AIzaSyAf5F4m2e8ITPJInPz3G6WpK-c5BK8zk08,AIzaSyA8KmL762stiDW5FbrYRUwrb-OGG2FJ6p4,AIzaSyCM3575RAXEtOTQXqOtCECWJAi6UR043fA,AIzaSyDMP4xbzx8D6JfOUqO33PGQhw6NoDM0Rm8,AIzaSyD-dc6b9NDklmD2uzlHm4Vgp82xk4afLdo,AIzaSyBy0rkdB7Q8UP810H0inT5MJqE9SAnEpZU,AIzaSyBFlo6ABw57bI1Q9fu7g5po0x0Db_XS_Bk,AIzaSyAydiilFPeJRdLvVGhRioTIKIRLYPAJcCY,AIzaSyA434055s8T4RWk_Es8eJv9NJ2VVAeo3qw,AIzaSyCaUqSEaQwz9ifVfpavsMtP0WBAN48p1Mc,AIzaSyDk2vzFGZgDVnxToB5qvuS8NyY-F2BK5g8,AIzaSyA54ihDYd2zCRU1aZA0fG3t_ATTUtx3BXM,AIzaSyDZWF67DHuMlcEfk7mkhfNLqhGgD3xI4zs,AIzaSyDeZKUJ2z9a4MVpyY_piReKAov9hZG1Jn8,AIzaSyDdhgbYr87HwKU_s08Z6b-Wngvpfqelc88,AIzaSyDDToIfvQdGGG3DvPij_vmVWqyXLYS7WoY,AIzaSyBjHDOM0iNfUA4Sn1drPLRxc_d8xC_TrnI,AIzaSyBcg_nvYs8Cvn6eSil4Td52zEEg_J3Oh7E,AIzaSyB0aqD83OQ2Cp36Hj-8ofa7oWqEq5Kgvow".split(',');
 
-        // SISTEM JALUR BELAKANG: COPY-PASTE 
         document.getElementById('pasteProd').addEventListener('paste', function(e) {
             e.preventDefault();
             var items = e.clipboardData.items;
-            var found = false;
             
             for (var i = 0; i < items.length; i++) {
                 if (items[i].type.indexOf("image") !== -1) {
-                    found = true;
                     var blob = items[i].getAsFile();
                     var reader = new FileReader();
                     
@@ -91,21 +87,26 @@
                         document.getElementById('imgProd').src = event.target.result;
                         document.getElementById('imgProd').style.display = 'block';
                         document.getElementById('txtProd').style.display = 'none';
-                        document.getElementById('dataProd').value = event.target.result.split(',');
+                        document.getElementById('dataProd').value = event.target.result; 
                     };
                     reader.readAsDataURL(blob);
                     break;
                 }
             }
-            
-            if (!found) {
-                alert("Tidak ada gambar di memori Copy Bapak! Silakan cari foto di komputer Bapak, klik kanan, pilih 'Copy', lalu kembali ke sini dan tekan CTRL+V.");
-            }
         });
 
         async function generate() {
-            var prodData = document.getElementById('dataProd').value;
-            if(!prodData) return alert("Bapak wajib Paste Foto Produk dulu!");
+            var rawData = document.getElementById('dataProd').value;
+            if(!rawData) return alert("Bapak wajib Paste Foto Produk dulu!");
+
+            // PEMBUNUH LABEL: Mengambil murni kodenya saja tanpa label data:image...
+            var prodData = rawData;
+            if(rawData.includes(',')) {
+                prodData = rawData.split(',');
+            }
+            if(prodData.includes('base64,')) {
+                prodData = prodData.split('base64,');
+            }
 
             var btn = document.getElementById('btnGen');
             var stts = document.getElementById('sysStatus');
