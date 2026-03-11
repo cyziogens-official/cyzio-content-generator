@@ -53,11 +53,11 @@
         <div class="form-area">
             <div>
                 <div class="sec-title">01. PRODUCT DATA</div>
-                <label class="upload-card">
-                    <input type="file" accept="image/*" style="display:none;" onchange="tampilkanGambar(this, 'imgProd', 'txtProd', 'dataProd')">
+                <div class="upload-card" onclick="document.getElementById('fProd').click()">
+                    <input type="file" id="fProd" accept="image/*" style="display:none;">
                     <div id="txtProd" style="text-align:center; color:var(--text-dim); font-size:11px; font-weight:600;">📷 Klik Upload Foto Produk</div>
                     <img id="imgProd" class="preview-img">
-                </label>
+                </div>
                 <input type="hidden" id="dataProd" data-mime="image/jpeg">
                 <textarea id="dInput" class="input-box" style="margin-top:10px;" placeholder="Detail/Keunggulan produk..."></textarea>
             </div>
@@ -74,11 +74,11 @@
                     </div>
                 </div>
                 
-                <label class="upload-card" id="cardModel" style="display:none; margin-bottom:10px; border-color:var(--primary);">
-                    <input type="file" accept="image/*" style="display:none;" onchange="tampilkanGambar(this, 'imgModel', 'txtModel', 'dataModel')">
+                <div class="upload-card" id="cardModel" style="display:none; margin-bottom:10px; border-color:var(--primary);" onclick="document.getElementById('fModel').click()">
+                    <input type="file" id="fModel" accept="image/*" style="display:none;">
                     <div id="txtModel" style="text-align:center; color:var(--primary); font-size:11px; font-weight:600;">🙎‍♀️ Klik Upload Foto Model</div>
                     <img id="imgModel" class="preview-img">
-                </label>
+                </div>
                 <input type="hidden" id="dataModel" data-mime="image/jpeg">
 
                 <div class="row">
@@ -114,32 +114,31 @@
     <script>
         const KEYS = "AIzaSyA2Ox-W1IykjypH2J8lC6pDL--SaX1ogYA,AIzaSyAR9bP_4FSzAYfOWr4r-CrNXLeMAW3id80,AIzaSyDpwSlrdXqXYeUl-4xzZvr6VR74IG13dJI,AIzaSyAK_yHQFz_JCKE-wwYYQHIygmTYePUbwH4,AIzaSyB6Qa53GBXRRE2U8LVsWVXJ5RqUtDVUbCE,AIzaSyDiSIyfHMKIHf1tKhdEVQSfaU6SIihpChY,AIzaSyCsd72jfw7ulgmx_X-Ij_H5ZWc6nBzlgmk,AIzaSyDtRT_cEu5dp0nifcoAtPJ50Z3lDyXxLlY,AIzaSyAylMIUNaSuAauiPIKY2gUmcjJgh9fB350,AIzaSyAf5F4m2e8ITPJInPz3G6WpK-c5BK8zk08,AIzaSyA8KmL762stiDW5FbrYRUwrb-OGG2FJ6p4,AIzaSyCM3575RAXEtOTQXqOtCECWJAi6UR043fA,AIzaSyDMP4xbzx8D6JfOUqO33PGQhw6NoDM0Rm8,AIzaSyD-dc6b9NDklmD2uzlHm4Vgp82xk4afLdo,AIzaSyBy0rkdB7Q8UP810H0inT5MJqE9SAnEpZU,AIzaSyBFlo6ABw57bI1Q9fu7g5po0x0Db_XS_Bk,AIzaSyAydiilFPeJRdLvVGhRioTIKIRLYPAJcCY,AIzaSyA434055s8T4RWk_Es8eJv9NJ2VVAeo3qw,AIzaSyCaUqSEaQwz9ifVfpavsMtP0WBAN48p1Mc,AIzaSyDk2vzFGZgDVnxToB5qvuS8NyY-F2BK5g8,AIzaSyA54ihDYd2zCRU1aZA0fG3t_ATTUtx3BXM,AIzaSyDZWF67DHuMlcEfk7mkhfNLqhGgD3xI4zs,AIzaSyDeZKUJ2z9a4MVpyY_piReKAov9hZG1Jn8,AIzaSyDdhgbYr87HwKU_s08Z6b-Wngvpfqelc88,AIzaSyDDToIfvQdGGG3DvPij_vmVWqyXLYS7WoY,AIzaSyBjHDOM0iNfUA4Sn1drPLRxc_d8xC_TrnI,AIzaSyBcg_nvYs8Cvn6eSil4Td52zEEg_J3Oh7E,AIzaSyB0aqD83OQ2Cp36Hj-8ofa7oWqEq5Kgvow".split(',');
 
-        // FUNGSI BACA GAMBAR DENGAN ALARM DETEKSI
-        function tampilkanGambar(inputElement, idGambar, idTeks, idData) {
-            try {
-                if (inputElement.files && inputElement.files) {
-                    var file = inputElement.files;
-                    
-                    // ALARM 1: Bukti tombol sukses ditekan dan file terbaca
-                    alert("BERHASIL! Sistem sedang memproses foto: " + file.name);
+        // SISTEM BACA FOTO PALING TAHAN BANTING
+        document.getElementById('fProd').addEventListener('change', function(e) {
+            bacaFoto(e, 'imgProd', 'txtProd', 'dataProd');
+        });
 
-                    var reader = new FileReader();
-                    reader.onload = function(e) {
-                        document.getElementById(idGambar).src = e.target.result;
-                        document.getElementById(idGambar).style.display = 'block';
-                        document.getElementById(idTeks).style.display = 'none';
-                        
-                        var base64 = e.target.result.split(',');
-                        var formatGambar = file.type || "image/jpeg";
-                        
-                        document.getElementById(idData).value = base64;
-                        document.getElementById(idData).setAttribute('data-mime', formatGambar);
-                    };
-                    reader.readAsDataURL(file);
-                }
-            } catch (err) {
-                alert("Error Sistem Javascript: " + err.message);
-            }
+        document.getElementById('fModel').addEventListener('change', function(e) {
+            bacaFoto(e, 'imgModel', 'txtModel', 'dataModel');
+        });
+
+        function bacaFoto(event, imgId, txtId, dataId) {
+            var file = event.target.files;
+            if (!file) return;
+
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                // Munculkan Foto
+                document.getElementById(imgId).src = e.target.result;
+                document.getElementById(imgId).style.display = 'block';
+                document.getElementById(txtId).style.display = 'none';
+                
+                // Simpan Data
+                document.getElementById(dataId).value = e.target.result.split(',');
+                document.getElementById(dataId).setAttribute('data-mime', file.type || 'image/jpeg');
+            };
+            reader.readAsDataURL(file);
         }
 
         function toggleModel() {
