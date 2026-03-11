@@ -9,41 +9,32 @@
         :root { --primary: #ff6b00; --bg-main: #050505; --bg-panel: #0a0a0a; --border: #1f1f1f; --text-dim: #94a3b8; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { background-color: var(--bg-main); color: #fff; height: 100vh; display: flex; overflow: hidden; background-image: radial-gradient(circle at 100% 0%, rgba(255,107,0,0.05), transparent 50%); }
-        
         ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
-        
         .sidebar { width: 420px; background: var(--bg-panel); border-right: 1px solid var(--border); display: flex; flex-direction: column; z-index: 10; box-shadow: 10px 0 30px rgba(0,0,0,0.5); }
         .header { padding: 30px; border-bottom: 1px solid var(--border); }
         .header h1 { font-size: 24px; font-weight: 800; letter-spacing: -1px; }
         .header h1 span { color: var(--primary); }
         .dev-badge { display: inline-block; margin-top: 8px; font-size: 9px; padding: 4px 8px; background: #111; border: 1px solid #222; border-radius: 4px; color: var(--text-dim); letter-spacing: 1px; }
-        
         .form-area { flex: 1; overflow-y: auto; padding: 25px; display: flex; flex-direction: column; gap: 20px; }
         .sec-title { font-size: 10px; font-weight: 800; color: var(--primary); letter-spacing: 1.5px; margin-bottom: 10px; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 5px; }
-        
         .upload-card { width: 100%; height: 110px; border: 1px dashed #333; border-radius: 12px; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; position: relative; overflow: hidden; transition: 0.3s; }
         .upload-card:hover { border-color: var(--primary); background: rgba(255,107,0,0.05); }
         .preview-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.6; display: none; }
-        
         .input-box { width: 100%; background: #000; border: 1px solid #222; border-radius: 10px; padding: 12px 15px; color: #fff; font-size: 13px; outline: none; transition: 0.3s; }
         .input-box:focus { border-color: var(--primary); }
         textarea.input-box { resize: none; height: 70px; }
-        
         .row { display: flex; gap: 15px; }
         .col { flex: 1; }
         .col label { display: block; font-size: 10px; color: var(--text-dim); margin-bottom: 6px; font-weight: 600; text-transform: uppercase; }
-        
         .btn-gen { background: var(--primary); color: #fff; border: none; padding: 16px; border-radius: 10px; font-weight: 800; font-size: 13px; cursor: pointer; transition: 0.3s; margin-top: 10px; text-transform: uppercase; letter-spacing: 1px; }
         .btn-gen:hover { background: #e65c00; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(255,107,0,0.2); }
         .btn-gen:disabled { opacity: 0.5; cursor: wait; transform: none; box-shadow: none; }
-        
         .main { flex: 1; padding: 40px; overflow-y: auto; }
         .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
         .ws-title { font-size: 12px; color: var(--text-dim); font-weight: 700; letter-spacing: 2px; text-transform: uppercase; }
         .status { font-size: 11px; font-weight: 700; color: #10b981; }
         .status.loading { color: var(--primary); }
-        
         .copy-card { background: #111; border: 1px solid #222; border-radius: 15px; padding: 30px; margin-bottom: 30px; line-height: 1.8; color: #e2e8f0; font-size: 14px; border-left: 3px solid var(--primary); }
         .grid-photos { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
         .photo-item { background: #000; border-radius: 15px; overflow: hidden; border: 1px solid #222; position: relative; }
@@ -62,8 +53,8 @@
         <div class="form-area">
             <div>
                 <div class="sec-title">01. PRODUCT DATA</div>
-                <label class="upload-card" id="cardProd">
-                    <input type="file" accept="image/*" style="display:none;" onchange="readImg(this, 'imgProd', 'txtProd', 'dataProd')">
+                <label class="upload-card" for="fProdInput">
+                    <input type="file" id="fProdInput" accept="image/*" style="display:none;">
                     <div id="txtProd" style="text-align:center; color:var(--text-dim); font-size:11px; font-weight:600;">📷 Klik Upload Foto Produk</div>
                     <img id="imgProd" class="preview-img">
                 </label>
@@ -83,8 +74,8 @@
                     </div>
                 </div>
                 
-                <label class="upload-card" id="cardModel" style="display:none; margin-bottom:10px; border-color:var(--primary);">
-                    <input type="file" accept="image/*" style="display:none;" onchange="readImg(this, 'imgModel', 'txtModel', 'dataModel')">
+                <label class="upload-card" for="fModelInput" id="cardModel" style="display:none; margin-bottom:10px; border-color:var(--primary);">
+                    <input type="file" id="fModelInput" accept="image/*" style="display:none;">
                     <div id="txtModel" style="text-align:center; color:var(--primary); font-size:11px; font-weight:600;">🙎‍♀️ Klik Upload Foto Model</div>
                     <img id="imgModel" class="preview-img">
                 </label>
@@ -123,35 +114,40 @@
     <script>
         const KEYS = "AIzaSyA2Ox-W1IykjypH2J8lC6pDL--SaX1ogYA,AIzaSyAR9bP_4FSzAYfOWr4r-CrNXLeMAW3id80,AIzaSyDpwSlrdXqXYeUl-4xzZvr6VR74IG13dJI,AIzaSyAK_yHQFz_JCKE-wwYYQHIygmTYePUbwH4,AIzaSyB6Qa53GBXRRE2U8LVsWVXJ5RqUtDVUbCE,AIzaSyDiSIyfHMKIHf1tKhdEVQSfaU6SIihpChY,AIzaSyCsd72jfw7ulgmx_X-Ij_H5ZWc6nBzlgmk,AIzaSyDtRT_cEu5dp0nifcoAtPJ50Z3lDyXxLlY,AIzaSyAylMIUNaSuAauiPIKY2gUmcjJgh9fB350,AIzaSyAf5F4m2e8ITPJInPz3G6WpK-c5BK8zk08,AIzaSyA8KmL762stiDW5FbrYRUwrb-OGG2FJ6p4,AIzaSyCM3575RAXEtOTQXqOtCECWJAi6UR043fA,AIzaSyDMP4xbzx8D6JfOUqO33PGQhw6NoDM0Rm8,AIzaSyD-dc6b9NDklmD2uzlHm4Vgp82xk4afLdo,AIzaSyBy0rkdB7Q8UP810H0inT5MJqE9SAnEpZU,AIzaSyBFlo6ABw57bI1Q9fu7g5po0x0Db_XS_Bk,AIzaSyAydiilFPeJRdLvVGhRioTIKIRLYPAJcCY,AIzaSyA434055s8T4RWk_Es8eJv9NJ2VVAeo3qw,AIzaSyCaUqSEaQwz9ifVfpavsMtP0WBAN48p1Mc,AIzaSyDk2vzFGZgDVnxToB5qvuS8NyY-F2BK5g8,AIzaSyA54ihDYd2zCRU1aZA0fG3t_ATTUtx3BXM,AIzaSyDZWF67DHuMlcEfk7mkhfNLqhGgD3xI4zs,AIzaSyDeZKUJ2z9a4MVpyY_piReKAov9hZG1Jn8,AIzaSyDdhgbYr87HwKU_s08Z6b-Wngvpfqelc88,AIzaSyDDToIfvQdGGG3DvPij_vmVWqyXLYS7WoY,AIzaSyBjHDOM0iNfUA4Sn1drPLRxc_d8xC_TrnI,AIzaSyBcg_nvYs8Cvn6eSil4Td52zEEg_J3Oh7E,AIzaSyB0aqD83OQ2Cp36Hj-8ofa7oWqEq5Kgvow".split(',');
 
-        // SISTEM BACA GAMBAR (SUPER CEPAT & RAW)
-        function readImg(input, imgId, txtId, dataId) {
-            try {
-                const file = input.files;
-                if (!file) return;
+        // DETEKSI OTOMATIS SAAT FOTO DIPILIH (ANTI ERROR BLOB)
+        document.getElementById('fProdInput').addEventListener('change', function(e) {
+            processImage(e.target.files, 'imgProd', 'txtProd', 'dataProd');
+        });
 
-                // Tolak kalau file terlalu besar (Google cuma terima maks 4MB per gambar)
-                if(file.size > 4 * 1024 * 1024) {
-                    alert("Ukuran gambar ini terlalu besar (Maks 4MB). Silakan di-screenshot dulu fotonya, lalu upload hasil screenshot-nya ya Pak.");
-                    input.value = ""; 
-                    return;
-                }
+        document.getElementById('fModelInput').addEventListener('change', function(e) {
+            processImage(e.target.files, 'imgModel', 'txtModel', 'dataModel');
+        });
 
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const base64 = e.target.result.split(',');
-                    document.getElementById(dataId).value = base64;
-                    document.getElementById(imgId).src = e.target.result;
-                    document.getElementById(imgId).style.display = 'block';
-                    document.getElementById(txtId).style.display = 'none';
-                };
-                reader.onerror = function() { alert("Gagal membaca gambar. Coba gambar lain."); };
-                reader.readAsDataURL(file);
-            } catch (err) {
-                alert("Error Sistem: " + err.message);
+        function processImage(file, imgId, txtId, dataId) {
+            if (!file) return; // Jika batal pilih foto, hentikan
+            
+            // Pengecekan aman: Pastikan yang dipilih benar-benar Blob/File gambar
+            if (!(file instanceof Blob)) {
+                alert("Sistem gagal membaca format file ini. Mohon gunakan foto JPG/PNG biasa.");
+                return;
             }
+
+            if(file.size > 4 * 1024 * 1024) {
+                alert("Ukuran gambar ini terlalu besar (Maks 4MB). Silakan di-screenshot dulu fotonya, lalu upload hasil screenshot-nya ya Pak.");
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById(dataId).value = e.target.result.split(',');
+                document.getElementById(imgId).src = e.target.result;
+                document.getElementById(imgId).style.display = 'block';
+                document.getElementById(txtId).style.display = 'none';
+            };
+            reader.onerror = function() { alert("Gagal membaca gambar. Coba gambar lain."); };
+            reader.readAsDataURL(file); // Ini yang tadi bikin error, sekarang sudah dilindungi Blob check!
         }
 
-        // TAMPIL/SEMBUNYI UPLOAD MODEL
         function toggleModel() {
             const val = document.getElementById('sSource').value;
             document.getElementById('cardModel').style.display = (val === 'CUSTOM') ? 'flex' : 'none';
@@ -177,7 +173,6 @@
             const format = document.getElementById('sFormat').value;
             const camp = document.getElementById('sCamp').value;
 
-            // RAKIT PROMPT GANDA
             let partsArray = [
                 { text: `Act as an Instagram Marketer. Analyze the product image provided. 
                 Product Detail: ${detail}. Target Audience: ${gen}, ${age}. Campaign: ${camp}. Output Format: ${format}.
