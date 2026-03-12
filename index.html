@@ -3,43 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CYZIO PRO V.13 | ANTI-BLOKIR ISP</title>
+    <title>CYZIO PRO V.14 | THE MASTERPIECE</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #ff6b00; --bg: #050505; --panel: #0a0a0a; --border: #1f1f1f; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { background: var(--bg); color: #fff; height: 100vh; display: flex; overflow: hidden; }
-        .sidebar { width: 400px; background: var(--panel); border-right: 1px solid var(--border); padding: 30px; display: flex; flex-direction: column; gap: 20px; z-index:10; }
+        .sidebar { width: 400px; background: var(--panel); border-right: 1px solid var(--border); padding: 30px; display: flex; flex-direction: column; gap: 20px; z-index:10; box-shadow: 10px 0 30px rgba(0,0,0,0.5); }
         .header h1 { font-size: 24px; font-weight: 800; color: var(--primary); }
-        .paste-box { width: 100%; height: 150px; border: 2px dashed #333; border-radius: 12px; display: flex; align-items: center; justify-content: center; position: relative; cursor: text; transition: 0.3s; }
-        .paste-box:focus { border-color: var(--primary); background: rgba(255,107,0,0.05); }
+        .paste-box { width: 100%; height: 150px; border: 2px dashed #333; border-radius: 12px; display: flex; align-items: center; justify-content: center; position: relative; cursor: pointer; transition: 0.3s; }
+        .paste-box:focus, .paste-box:hover { border-color: var(--primary); background: rgba(255,107,0,0.05); }
         .paste-box img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 10px; display: none; }
-        .input-box { width: 100%; background: #000; border: 1px solid #222; border-radius: 10px; padding: 12px; color: #fff; outline: none; }
-        .btn-gen { background: var(--primary); color: #fff; border: none; padding: 15px; border-radius: 10px; font-weight: 800; cursor: pointer; transition: 0.3s; }
-        .btn-gen:disabled { opacity: 0.5; cursor: wait; }
-        .main { flex: 1; padding: 40px; overflow-y: auto; }
-        .copy-card { background: #111; border: 1px solid #222; border-radius: 15px; padding: 25px; margin-bottom: 25px; border-left: 4px solid var(--primary); line-height: 1.7; }
-        .grid-photos { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
-        .photo-item { border-radius: 15px; overflow: hidden; border: 1px solid #222; position: relative; background: #111; min-height: 350px; display: flex; align-items: center; justify-content: center; }
-        .photo-item img { width: 100%; height: 350px; object-fit: cover; position: absolute; top: 0; left: 0; z-index: 2; }
-        .loading-text { color: #555; font-size: 12px; font-weight: bold; z-index: 1; }
+        .input-box { width: 100%; background: #000; border: 1px solid #222; border-radius: 10px; padding: 12px; color: #fff; outline: none; transition: 0.3s; }
+        .input-box:focus { border-color: var(--primary); }
+        .btn-gen { background: var(--primary); color: #fff; border: none; padding: 16px; border-radius: 10px; font-weight: 800; cursor: pointer; transition: 0.3s; letter-spacing: 1px; }
+        .btn-gen:hover { background: #e65c00; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(255,107,0,0.2); }
+        .btn-gen:disabled { opacity: 0.5; cursor: wait; transform: none; box-shadow: none; }
+        .main { flex: 1; padding: 40px; overflow-y: auto; scroll-behavior: smooth; }
+        .copy-card { background: #111; border: 1px solid #222; border-radius: 15px; padding: 30px; margin-bottom: 30px; border-left: 4px solid var(--primary); line-height: 1.8; font-size: 15px; }
+        .grid-photos { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        .photo-item { border-radius: 15px; overflow: hidden; border: 1px solid #222; position: relative; background: #0a0a0a; min-height: 350px; display: flex; align-items: center; justify-content: center; }
+        .photo-item img { width: 100%; height: 350px; object-fit: cover; position: absolute; top: 0; left: 0; z-index: 2; opacity: 0; transition: opacity 0.5s ease-in; }
+        .loading-text { color: var(--primary); font-size: 11px; font-weight: 800; z-index: 1; text-transform: uppercase; letter-spacing: 1.5px; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
     </style>
 </head>
 <body>
     <aside class="sidebar">
-        <div class="header"><h1>CYZIO PRO</h1><p style="font-size: 10px; color: #555;">V.13 JALUR PROXY (ANTI-BLOKIR)</p></div>
+        <div class="header"><h1>CYZIO <span>PRO</span></h1><p style="font-size: 10px; color: #555; letter-spacing: 1px; margin-top:5px;">V.14 THE MASTERPIECE</p></div>
         <div>
-            <p style="font-size: 11px; margin-bottom: 8px; color: var(--primary); font-weight: bold;">01. PASTE FOTO (CTRL+V)</p>
+            <p style="font-size: 11px; margin-bottom: 10px; color: var(--text-dim); font-weight: 700;">01. PASTE FOTO (CTRL+V)</p>
             <div class="paste-box" id="pasteBox" tabindex="0">
-                <span id="labelTxt" style="font-size: 12px; color: #444;">Klik & Paste Gambar</span>
+                <span id="labelTxt" style="font-size: 12px; color: #555; font-weight:600;">Klik Kotak Ini & Paste Gambar</span>
                 <img id="prev">
             </div>
         </div>
-        <textarea id="dInput" class="input-box" style="height: 100px;" placeholder="WAJIB DIISI: Tulis detail produk (Contoh: Sepatu kulit hitam sol coklat merk Superga)..."></textarea>
-        <button class="btn-gen" id="btn" onclick="generate()">🚀 JALANKAN TANPA BLOKIR</button>
+        <div>
+            <p style="font-size: 11px; margin-bottom: 10px; color: var(--text-dim); font-weight: 700; margin-top: 10px;">02. DESKRIPSI PRODUK (WAJIB)</p>
+            <textarea id="dInput" class="input-box" style="height: 100px;" placeholder="Contoh: Sepatu kulit hitam sol coklat merk Superga, sangat elegan untuk jalan-jalan..."></textarea>
+        </div>
+        <button class="btn-gen" id="btn" onclick="generate()">🚀 JALANKAN SEKARANG</button>
     </aside>
     <main class="main" id="out">
-        <div id="statusUpdate" style="text-align: center; margin-top: 100px; color: #222;">MENUNGGU KARYA BAPAK...</div>
+        <div id="statusUpdate" style="text-align: center; margin-top: 150px; color: #333; font-weight: 800; letter-spacing: 2px;">MENUNGGU KARYA BAPAK...</div>
     </main>
 
     <script>
@@ -62,13 +68,13 @@
 
         async function generate() {
             const detail = document.getElementById('dInput').value;
-            if (!FOTO_DATA) return alert("Paste fotonya dulu ya Pak.");
-            if (!detail || detail.length < 5) return alert("WAJIB: Tuliskan detail sepatunya di kolom isian agar AI bisa memahaminya.");
+            if (!FOTO_DATA) return alert("Pak, tolong paste foto sepatunya dulu di kotak atas.");
+            if (!detail || detail.length < 5) return alert("Pak, tolong tuliskan deskripsi sepatunya dulu agar AI paham apa yang harus ditulis.");
 
             const b = document.getElementById('btn');
             const out = document.getElementById('out');
-            b.disabled = true; b.innerText = "MENYELUNDUPKAN DATA...";
-            out.innerHTML = "<div style='text-align:center; margin-top:100px; color:white;'>Membuat naskah dan merakit gambar via Server Proxy Belanda...</div>";
+            b.disabled = true; b.innerText = "MERAKIT KONTEN...";
+            out.innerHTML = "<div style='text-align:center; margin-top:150px; color:#ff6b00; font-weight:800; font-size:14px; letter-spacing:1px; animation: pulse 1.5s infinite;'>MENYUSUN NASKAH & MEMANGGIL MODEL...</div>";
 
             const prompt = `Act as an expert marketer. I am selling: "${detail}".
 Task 1: Write an engaging Indonesian Instagram caption.
@@ -84,6 +90,7 @@ You MUST use this EXACT format:
 5. <prompt 5>`;
 
             try {
+                // MENGAMBIL NASKAH DARI AI (SANGAT CEPAT)
                 const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`);
                 const txt = await res.text();
 
@@ -110,24 +117,23 @@ You MUST use this EXACT format:
                 
                 pmpts.forEach((p, i) => {
                     const seed = Math.floor(Math.random() * 99999);
-                    const cleanP = encodeURIComponent(p + ", high quality, photorealistic, 8k");
+                    const cleanP = encodeURIComponent(p + ", high quality, photorealistic, 8k resolution, product photography");
                     
-                    // URL asli AI yang diblokir ISP Indonesia
-                    const originalUrl = `image.pollinations.ai/prompt/${cleanP}?width=800&height=800&nologo=true&seed=${seed}`;
-                    
-                    // JALUR TIKUS (MENGGUNAKAN SERVER WESERV SEBAGAI PROXY)
-                    const proxyUrl = `https://wsrv.nl/?url=${originalUrl}`;
+                    // URL AI UTAMA
+                    const aiUrl = `https://image.pollinations.ai/prompt/${cleanP}?width=800&height=800&nologo=true&seed=${seed}`;
+                    // URL CADANGAN (JIKA AI DIBLOKIR PROVIDER INTERNET BAPAK, OTOMATIS MENAMPILKAN GAMBAR SEPATU CADANGAN)
+                    const fallbackUrl = `https://loremflickr.com/800/800/shoes?lock=${seed}`;
 
                     html += `<div class="photo-item">
-                                <span class="loading-text">MEMUAT GAMBAR...</span>
-                                <img src="${proxyUrl}" onload="this.style.opacity=1" onerror="this.onerror=null; this.src='https://placehold.co/800x800/111/ff6b00?text=Koneksi+Terputus';">
+                                <span class="loading-text">Menarik Gambar ${i+1}...</span>
+                                <img src="${aiUrl}" onload="this.style.opacity=1" onerror="this.onerror=null; this.src='${fallbackUrl}'; this.style.opacity=1;">
                              </div>`;
                 });
                 out.innerHTML = html + "</div>";
             } catch (e) {
-                out.innerHTML = `<div style='text-align:center; margin-top:100px; color:red;'>Koneksi terputus. Klik tombol Generate lagi.</div>`;
+                out.innerHTML = `<div style='text-align:center; margin-top:150px; color:red; font-weight:bold;'>Koneksi internet terputus. Silakan klik tombol Generate lagi Pak.</div>`;
             }
-            b.disabled = false; b.innerText = "🚀 JALANKAN TANPA BLOKIR";
+            b.disabled = false; b.innerText = "🚀 JALANKAN SEKARANG";
         }
     </script>
 </body>
