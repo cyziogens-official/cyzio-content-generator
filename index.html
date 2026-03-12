@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CYZIO PRO V.11 | CLEAN MODE</title>
+    <title>CYZIO PRO V.11.1 | STABLE MODE</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #ff6b00; --bg: #050505; --panel: #0a0a0a; --border: #1f1f1f; }
@@ -26,7 +26,7 @@
 </head>
 <body>
     <aside class="sidebar">
-        <div class="header"><h1>CYZIO PRO</h1><p style="font-size: 10px; color: #555;">V.11 CLEAN & FAST</p></div>
+        <div class="header"><h1>CYZIO PRO</h1><p style="font-size: 10px; color: #555;">V.11.1 STABLE MODE</p></div>
         <div>
             <p style="font-size: 11px; margin-bottom: 8px; color: var(--primary); font-weight: bold;">01. PASTE FOTO DISINI (CTRL+V)</p>
             <div class="paste-box" id="pasteBox" tabindex="0">
@@ -42,7 +42,7 @@
     </main>
 
     <script>
-        // BESOK PAGI: CUKUP GANTI INI DENGAN 1 KUNCI BARU SAJA PAK!
+        // MASUKKAN API KEY TERBARU BAPAK DISINI
         const API_KEY = "AIzaSyCfcPF6nxjKaIG1JMhTtvJgvFQHIw8pf4o";
 
         let FOTO_DATA = "";
@@ -66,15 +66,19 @@
 
         async function generate() {
             if (!FOTO_DATA) return alert("Paste fotonya dulu ya Pak.");
-            if (API_KEY === "MASUKKAN_SATU_KUNCI_BARU_BESOK_DISINI") return alert("Tolong masukkan API Key baru di kode GitHub Bapak.");
+            if (API_KEY.includes("MASUKKAN")) return alert("Masukkan API Key dulu di kode!");
 
             const b = document.getElementById('btn');
+            const out = document.getElementById('out');
             b.disabled = true; b.innerText = "MENGANALISIS...";
+            out.innerHTML = "<div style='text-align:center; margin-top:100px; color:white;'>Sedang merakit naskah dan gambar model...</div>";
 
-            const pr = "Analyze this product. Create 1 Indonesian IG caption and 5 image prompts for AI generation. Format: [NASKAH]...[GAMBAR]1...2...etc";
+            const detailProd = document.getElementById('dInput').value || "Produk sepatu premium";
+            const pr = `Analyze this product: ${detailProd}. Create 1 Indonesian Instagram caption and 5 English prompts for photorealistic AI generation with human models. Format exactly: [NASKAH]...[GAMBAR]1. prompt...2. prompt...`;
 
             try {
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`, {
+                // SAYA UBAH KE GEMINI-1.5-FLASH UNTUK MENGHINDARI LIMIT QUOTA
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ contents: [{ parts: [{text: pr}, {inlineData: {mimeType: FOTO_MIME, data: FOTO_DATA}}] }] })
                 });
@@ -87,13 +91,14 @@
                 const naskah = ps[0].replace('[NASKAH]', '').trim();
                 const pmpts = ps[1].match(/\d+\.\s*(.*)/g).map(p => p.replace(/\d+\.\s*/, '').trim());
 
-                let html = `<div class="copy-card"><strong>NASKAH:</strong><br>${naskah.replace(/\n/g, '<br>')}</div><div class="grid-photos">`;
+                let html = `<div class="copy-card"><strong>NASKAH IKLAN:</strong><br>${naskah.replace(/\n/g, '<br>')}</div><div class="grid-photos">`;
                 pmpts.forEach(p => {
                     html += `<div class="photo-item"><img src="https://image.pollinations.ai/prompt/${encodeURIComponent(p)}?width=800&height=800&nologo=true"></div>`;
                 });
-                document.getElementById('out').innerHTML = html + "</div>";
+                out.innerHTML = html + "</div>";
             } catch (e) {
-                alert("Sistem Google Lelah. Coba lagi besok pagi ya Pak: " + e.message);
+                out.innerHTML = "<div style='text-align:center; margin-top:100px; color:red;'>Gagal. Coba Refresh dan Generate lagi Pak.</div>";
+                alert("Pesan Google: " + e.message);
             }
             b.disabled = false; b.innerText = "🚀 GENERATE IKLAN";
         }
