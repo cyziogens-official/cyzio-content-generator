@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CYZIO PRO V.11.6 | FINAL VICTORY</title>
+    <title>CYZIO PRO V.11.7 | FINAL DEFEAT</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #ff6b00; --bg: #050505; --panel: #0a0a0a; --border: #1f1f1f; }
@@ -16,7 +16,6 @@
         .paste-box img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 10px; display: none; }
         .input-box { width: 100%; background: #000; border: 1px solid #222; border-radius: 10px; padding: 12px; color: #fff; outline: none; }
         .btn-gen { background: var(--primary); color: #fff; border: none; padding: 15px; border-radius: 10px; font-weight: 800; cursor: pointer; transition: 0.3s; }
-        .btn-gen:disabled { opacity: 0.5; cursor: wait; }
         .main { flex: 1; padding: 40px; overflow-y: auto; }
         .copy-card { background: #111; border: 1px solid #222; border-radius: 15px; padding: 25px; margin-bottom: 25px; border-left: 4px solid var(--primary); line-height: 1.7; }
         .grid-photos { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
@@ -26,7 +25,7 @@
 </head>
 <body>
     <aside class="sidebar">
-        <div class="header"><h1>CYZIO PRO</h1><p style="font-size: 10px; color: #555;">V.11.6 FINAL VICTORY</p></div>
+        <div class="header"><h1>CYZIO PRO</h1><p style="font-size: 10px; color: #555;">V.11.7 STABLE PRO</p></div>
         <div>
             <p style="font-size: 11px; margin-bottom: 8px; color: var(--primary); font-weight: bold;">PASTE SEPATUNYA DISINI (CTRL+V)</p>
             <div class="paste-box" id="pasteBox" tabindex="0">
@@ -34,15 +33,15 @@
                 <img id="prev">
             </div>
         </div>
-        <textarea id="dInput" class="input-box" style="height: 100px;" placeholder="Detail sepatu..."></textarea>
+        <textarea id="dInput" class="input-box" style="height: 100px;" placeholder="Tulis detail keunggulan sepatu..."></textarea>
         <button class="btn-gen" id="btn" onclick="generate()">🚀 JALANKAN IKLAN</button>
     </aside>
     <main class="main" id="out">
-        <div style="text-align: center; margin-top: 100px; color: #222;">SIAP MELEDAKKAN KONTEN...</div>
+        <div id="statusUpdate" style="text-align: center; margin-top: 100px; color: #222;">MENUNGGU KARYA BAPAK...</div>
     </main>
 
     <script>
-        // PAKAI API KEY EMAIL BARU BAPAK DISINI
+        // MASUKKAN API KEY EMAIL BARU BAPAK DI SINI
         const API_KEY = "AIzaSyCfcPF6nxjKaIG1JMhTtvJgvFQHIw8pf4o";
 
         let FOTO_DATA = "";
@@ -68,15 +67,15 @@
             if (!FOTO_DATA) return alert("Paste fotonya dulu ya Pak.");
             const b = document.getElementById('btn');
             const out = document.getElementById('out');
-            b.disabled = true; b.innerText = "BERHASIL TEMBUS GOOGLE!";
-            out.innerHTML = "<div style='text-align:center; margin-top:100px; color:white;'>Sedang merakit naskah dan model sepatu Superga...</div>";
+            b.disabled = true; b.innerText = "BERHASIL TEMBUS!";
+            out.innerHTML = "<div style='text-align:center; margin-top:100px; color:white;'>Menghubungi Mesin Gemini 1.5 PRO...</div>";
 
             const detail = document.getElementById('dInput').value || "Sepatu premium";
-            const prompt = `Analyze product: ${detail}. Create 1 Indonesian IG caption and 5 English image prompts for photorealistic AI generation with human models. Format: [NASKAH]...[GAMBAR]1. prompt...2. prompt...`;
+            const prompt = `Analyze product: ${detail}. Create 1 Indonesian IG caption and 5 English image prompts. Format: [NASKAH]...[GAMBAR]1. prompt...`;
 
             try {
-                // INI JURU KUNCI KEMENANGAN: gemini-1.5-flash-latest
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${API_KEY}`, {
+                // SAYA ARAHKAN KE MESIN PRO YANG PALING STABIL
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${API_KEY}`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ contents: [{ parts: [{text: prompt}, {inlineData: {mimeType: FOTO_MIME, data: FOTO_DATA}}] }] })
                 });
