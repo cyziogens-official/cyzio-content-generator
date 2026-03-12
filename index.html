@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CYZIO PRO V.12 | GOOGLE KILLER</title>
+    <title>CYZIO PRO V.13 | ANTI-BLOKIR ISP</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #ff6b00; --bg: #050505; --panel: #0a0a0a; --border: #1f1f1f; }
@@ -20,13 +20,14 @@
         .main { flex: 1; padding: 40px; overflow-y: auto; }
         .copy-card { background: #111; border: 1px solid #222; border-radius: 15px; padding: 25px; margin-bottom: 25px; border-left: 4px solid var(--primary); line-height: 1.7; }
         .grid-photos { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
-        .photo-item { border-radius: 15px; overflow: hidden; border: 1px solid #222; }
-        .photo-item img { width: 100%; height: 350px; object-fit: cover; }
+        .photo-item { border-radius: 15px; overflow: hidden; border: 1px solid #222; position: relative; background: #111; min-height: 350px; display: flex; align-items: center; justify-content: center; }
+        .photo-item img { width: 100%; height: 350px; object-fit: cover; position: absolute; top: 0; left: 0; z-index: 2; }
+        .loading-text { color: #555; font-size: 12px; font-weight: bold; z-index: 1; }
     </style>
 </head>
 <body>
     <aside class="sidebar">
-        <div class="header"><h1>CYZIO PRO</h1><p style="font-size: 10px; color: #555;">V.12 THE GOOGLE KILLER (NO API KEY)</p></div>
+        <div class="header"><h1>CYZIO PRO</h1><p style="font-size: 10px; color: #555;">V.13 JALUR PROXY (ANTI-BLOKIR)</p></div>
         <div>
             <p style="font-size: 11px; margin-bottom: 8px; color: var(--primary); font-weight: bold;">01. PASTE FOTO (CTRL+V)</p>
             <div class="paste-box" id="pasteBox" tabindex="0">
@@ -35,14 +36,13 @@
             </div>
         </div>
         <textarea id="dInput" class="input-box" style="height: 100px;" placeholder="WAJIB DIISI: Tulis detail produk (Contoh: Sepatu kulit hitam sol coklat merk Superga)..."></textarea>
-        <button class="btn-gen" id="btn" onclick="generate()">🚀 JALANKAN TANPA GOOGLE</button>
+        <button class="btn-gen" id="btn" onclick="generate()">🚀 JALANKAN TANPA BLOKIR</button>
     </aside>
     <main class="main" id="out">
         <div id="statusUpdate" style="text-align: center; margin-top: 100px; color: #222;">MENUNGGU KARYA BAPAK...</div>
     </main>
 
     <script>
-        // BYE-BYE GOOGLE! TIDAK PERLU API KEY SAMA SEKALI! 
         let FOTO_DATA = "";
 
         document.getElementById('pasteBox').addEventListener('paste', function(e) {
@@ -63,12 +63,12 @@
         async function generate() {
             const detail = document.getElementById('dInput').value;
             if (!FOTO_DATA) return alert("Paste fotonya dulu ya Pak.");
-            if (!detail || detail.length < 5) return alert("Pak, karena kita tidak pakai Google, Bapak WAJIB menuliskan deskripsi sepatunya (contoh: Sepatu hitam sol coklat) di kolom isian agar AI paham apa yang diiklankan.");
+            if (!detail || detail.length < 5) return alert("WAJIB: Tuliskan detail sepatunya di kolom isian agar AI bisa memahaminya.");
 
             const b = document.getElementById('btn');
             const out = document.getElementById('out');
-            b.disabled = true; b.innerText = "MENEMBUS SERVER BEBAS LIMIT...";
-            out.innerHTML = "<div style='text-align:center; margin-top:100px; color:white;'>Merakit naskah dan gambar tanpa batasan dari Google...</div>";
+            b.disabled = true; b.innerText = "MENYELUNDUPKAN DATA...";
+            out.innerHTML = "<div style='text-align:center; margin-top:100px; color:white;'>Membuat naskah dan merakit gambar via Server Proxy Belanda...</div>";
 
             const prompt = `Act as an expert marketer. I am selling: "${detail}".
 Task 1: Write an engaging Indonesian Instagram caption.
@@ -103,20 +103,31 @@ You MUST use this EXACT format:
                         }
                     }
                 } else {
-                    naskah = txt; // Jika format AI sedikit meleset, naskah tetap aman
+                    naskah = txt; 
                 }
 
                 let html = `<div class="copy-card"><strong>NASKAH IKLAN:</strong><br><br>${naskah.replace(/\n/g, '<br>')}</div><div class="grid-photos">`;
+                
                 pmpts.forEach((p, i) => {
                     const seed = Math.floor(Math.random() * 99999);
                     const cleanP = encodeURIComponent(p + ", high quality, photorealistic, 8k");
-                    html += `<div class="photo-item"><img src="https://image.pollinations.ai/prompt/${cleanP}?width=800&height=800&nologo=true&seed=${seed}"></div>`;
+                    
+                    // URL asli AI yang diblokir ISP Indonesia
+                    const originalUrl = `image.pollinations.ai/prompt/${cleanP}?width=800&height=800&nologo=true&seed=${seed}`;
+                    
+                    // JALUR TIKUS (MENGGUNAKAN SERVER WESERV SEBAGAI PROXY)
+                    const proxyUrl = `https://wsrv.nl/?url=${originalUrl}`;
+
+                    html += `<div class="photo-item">
+                                <span class="loading-text">MEMUAT GAMBAR...</span>
+                                <img src="${proxyUrl}" onload="this.style.opacity=1" onerror="this.onerror=null; this.src='https://placehold.co/800x800/111/ff6b00?text=Koneksi+Terputus';">
+                             </div>`;
                 });
                 out.innerHTML = html + "</div>";
             } catch (e) {
                 out.innerHTML = `<div style='text-align:center; margin-top:100px; color:red;'>Koneksi terputus. Klik tombol Generate lagi.</div>`;
             }
-            b.disabled = false; b.innerText = "🚀 JALANKAN TANPA GOOGLE";
+            b.disabled = false; b.innerText = "🚀 JALANKAN TANPA BLOKIR";
         }
     </script>
 </body>
