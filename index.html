@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CYZIO PRO V.14 | THE MASTERPIECE</title>
+    <title>CYZIO PRO V.16 | THE ULTIMATE ROTATOR</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #ff6b00; --bg: #050505; --panel: #0a0a0a; --border: #1f1f1f; }
@@ -24,13 +24,13 @@
         .grid-photos { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
         .photo-item { border-radius: 15px; overflow: hidden; border: 1px solid #222; position: relative; background: #0a0a0a; min-height: 350px; display: flex; align-items: center; justify-content: center; }
         .photo-item img { width: 100%; height: 350px; object-fit: cover; position: absolute; top: 0; left: 0; z-index: 2; opacity: 0; transition: opacity 0.5s ease-in; }
-        .loading-text { color: var(--primary); font-size: 11px; font-weight: 800; z-index: 1; text-transform: uppercase; letter-spacing: 1.5px; animation: pulse 1.5s infinite; }
+        .loading-text { color: var(--primary); font-size: 11px; font-weight: 800; z-index: 1; text-transform: uppercase; letter-spacing: 1.5px; animation: pulse 1.5s infinite; text-align: center; padding: 10px; }
         @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
     </style>
 </head>
 <body>
     <aside class="sidebar">
-        <div class="header"><h1>CYZIO <span>PRO</span></h1><p style="font-size: 10px; color: #555; letter-spacing: 1px; margin-top:5px;">V.14 THE MASTERPIECE</p></div>
+        <div class="header"><h1>CYZIO <span>PRO</span></h1><p style="font-size: 10px; color: #555; letter-spacing: 1px; margin-top:5px;">V.16 AUTO-ROTATE GEMINI</p></div>
         <div>
             <p style="font-size: 11px; margin-bottom: 10px; color: var(--text-dim); font-weight: 700;">01. PASTE FOTO (CTRL+V)</p>
             <div class="paste-box" id="pasteBox" tabindex="0">
@@ -39,17 +39,21 @@
             </div>
         </div>
         <div>
-            <p style="font-size: 11px; margin-bottom: 10px; color: var(--text-dim); font-weight: 700; margin-top: 10px;">02. DESKRIPSI PRODUK (WAJIB)</p>
-            <textarea id="dInput" class="input-box" style="height: 100px;" placeholder="Contoh: Sepatu kulit hitam sol coklat merk Superga, sangat elegan untuk jalan-jalan..."></textarea>
+            <p style="font-size: 11px; margin-bottom: 10px; color: var(--text-dim); font-weight: 700; margin-top: 10px;">02. CATATAN TAMBAHAN (OPSIONAL)</p>
+            <textarea id="dInput" class="input-box" style="height: 100px;" placeholder="Bisa dikosongkan. Biarkan 'Mata AI' Gemini yang melihat fotonya langsung..."></textarea>
         </div>
-        <button class="btn-gen" id="btn" onclick="generate()">🚀 JALANKAN SEKARANG</button>
+        <button class="btn-gen" id="btn" onclick="generate()">🚀 ROTASI & JALANKAN GEMINI</button>
     </aside>
     <main class="main" id="out">
         <div id="statusUpdate" style="text-align: center; margin-top: 150px; color: #333; font-weight: 800; letter-spacing: 2px;">MENUNGGU KARYA BAPAK...</div>
     </main>
 
     <script>
+        // MASUKKAN API KEY DARI AKUN GOOGLE TUA BAPAK DI SINI
+        const API_KEY = "AIzaSyB2t5nl2u6AIJuSHGuIcQ5-Qkfq19a6XAk";
+
         let FOTO_DATA = "";
+        let FOTO_MIME = "image/jpeg";
 
         document.getElementById('pasteBox').addEventListener('paste', function(e) {
             let item = e.clipboardData.items[0];
@@ -60,25 +64,25 @@
                     document.getElementById('prev').src = event.target.result;
                     document.getElementById('prev').style.display = 'block';
                     document.getElementById('labelTxt').style.display = 'none';
-                    FOTO_DATA = "ADA"; 
+                    FOTO_DATA = event.target.result.split(',')[1];
+                    FOTO_MIME = blob.type;
                 };
                 reader.readAsDataURL(blob);
             }
         });
 
         async function generate() {
-            const detail = document.getElementById('dInput').value;
             if (!FOTO_DATA) return alert("Pak, tolong paste foto sepatunya dulu di kotak atas.");
-            if (!detail || detail.length < 5) return alert("Pak, tolong tuliskan deskripsi sepatunya dulu agar AI paham apa yang harus ditulis.");
+            if (API_KEY.includes("MASUKKAN")) return alert("Pak, API Key-nya belum dimasukkan ke kode.");
 
             const b = document.getElementById('btn');
             const out = document.getElementById('out');
-            b.disabled = true; b.innerText = "MERAKIT KONTEN...";
-            out.innerHTML = "<div style='text-align:center; margin-top:150px; color:#ff6b00; font-weight:800; font-size:14px; letter-spacing:1px; animation: pulse 1.5s infinite;'>MENYUSUN NASKAH & MEMANGGIL MODEL...</div>";
+            b.disabled = true; 
 
-            const prompt = `Act as an expert marketer. I am selling: "${detail}".
-Task 1: Write an engaging Indonesian Instagram caption.
-Task 2: Write 5 English prompts for an AI image generator to showcase this product.
+            const detail = document.getElementById('dInput').value || "produk di gambar ini";
+            const prompt = `Analyze this exact product image directly using your vision capabilities. Focus on its specific design, color, and style. Additional context: ${detail}.
+Task 1: Write an engaging Indonesian Instagram caption selling this specific item.
+Task 2: Write 5 English prompts for an AI image generator to showcase this exact product in different scenarios.
 You MUST use this EXACT format:
 [NASKAH]
 <caption here>
@@ -89,13 +93,69 @@ You MUST use this EXACT format:
 4. <prompt 4>
 5. <prompt 5>`;
 
-            try {
-                // MENGAMBIL NASKAH DARI AI (SANGAT CEPAT)
-                const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`);
-                const txt = await res.text();
+            // DAFTAR ROTASI MESIN GEMINI (Mulai dari yang paling standar sampai yang paling canggih)
+            const geminiModels = [
+                "gemini-1.5-flash",
+                "gemini-1.5-flash-latest",
+                "gemini-1.5-flash-8b",
+                "gemini-1.5-pro",
+                "gemini-1.5-pro-latest",
+                "gemini-2.0-flash"
+            ];
 
+            let success = false;
+            let finalData = null;
+            let lastError = "";
+
+            // LOOPING MENGETUK SEMUA PINTU MESIN GEMINI
+            for (let i = 0; i < geminiModels.length; i++) {
+                const currentModel = geminiModels[i];
+                b.innerText = `MENCOBA: ${currentModel.toUpperCase()}`;
+                out.innerHTML = `<div style='text-align:center; margin-top:150px; color:#ff6b00; font-weight:800; font-size:14px; letter-spacing:1px; animation: pulse 1.5s infinite;'>MENGETUK PINTU MESIN: ${currentModel}...</div>`;
+
+                try {
+                    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${currentModel}:generateContent?key=${API_KEY}`, {
+                        method: 'POST', 
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                            contents: [{ 
+                                parts: [
+                                    {text: prompt}, 
+                                    {inlineData: {mimeType: FOTO_MIME, data: FOTO_DATA}}
+                                ] 
+                            }] 
+                        })
+                    });
+
+                    const d = await res.json();
+                    
+                    if (res.ok) {
+                        finalData = d;
+                        success = true;
+                        break; // BERHASIL TEMBUS! Hentikan putaran.
+                    } else {
+                        lastError = d.error?.message || "Ditolak sistem Google.";
+                    }
+                } catch (e) {
+                    lastError = e.message;
+                }
+            }
+
+            // JIKA SEMUA PINTU TETAP TERTUTUP
+            if (!success) {
+                out.innerHTML = `<div style='text-align:center; margin-top:150px; color:red; font-weight:bold;'>Gagal menembus semua mesin Gemini!<br><br>Error Terakhir: ${lastError}<br><br>Sepertinya akun Google tua ini juga sudah kena limit kuota.</div>`;
+                b.disabled = false; b.innerText = "🚀 ROTASI & JALANKAN GEMINI";
+                return;
+            }
+
+            // JIKA SALAH SATU PINTU TERBUKA, RAKIT HASILNYA
+            try {
+                out.innerHTML = "<div style='text-align:center; margin-top:150px; color:#10b981; font-weight:800; font-size:14px; letter-spacing:1px;'>PINTU TERBUKA! MERAKIT NASKAH & GAMBAR...</div>";
+                b.innerText = "BERHASIL!";
+
+                const txt = finalData.candidates[0].content.parts[0].text;
                 let naskah = "Naskah iklan siap disajikan.";
-                let pmpts = [detail + " product shot", detail + " lifestyle", detail + " premium studio", detail + " outdoor", detail + " cinematic"];
+                let pmpts = ["product shot", "lifestyle", "premium studio", "outdoor", "cinematic"];
 
                 if(txt.includes('[GAMBAR]')) {
                     const ps = txt.split('[GAMBAR]');
@@ -109,31 +169,28 @@ You MUST use this EXACT format:
                             pmpts = lines.slice(0, 5).map(l => l.replace(/^\d+\.\s*/, '').trim());
                         }
                     }
-                } else {
-                    naskah = txt; 
                 }
 
-                let html = `<div class="copy-card"><strong>NASKAH IKLAN:</strong><br><br>${naskah.replace(/\n/g, '<br>')}</div><div class="grid-photos">`;
+                let html = `<div class="copy-card"><strong>NASKAH IKLAN (HASIL MATA GEMINI):</strong><br><br>${naskah.replace(/\n/g, '<br>')}</div><div class="grid-photos">`;
                 
                 pmpts.forEach((p, i) => {
                     const seed = Math.floor(Math.random() * 99999);
-                    const cleanP = encodeURIComponent(p + ", high quality, photorealistic, 8k resolution, product photography");
+                    const cleanP = encodeURIComponent(p + ", high quality, photorealistic, 8k resolution, highly detailed product photography");
                     
-                    // URL AI UTAMA
                     const aiUrl = `https://image.pollinations.ai/prompt/${cleanP}?width=800&height=800&nologo=true&seed=${seed}`;
-                    // URL CADANGAN (JIKA AI DIBLOKIR PROVIDER INTERNET BAPAK, OTOMATIS MENAMPILKAN GAMBAR SEPATU CADANGAN)
                     const fallbackUrl = `https://loremflickr.com/800/800/shoes?lock=${seed}`;
 
                     html += `<div class="photo-item">
-                                <span class="loading-text">Menarik Gambar ${i+1}...</span>
+                                <span class="loading-text">Menarik Gambar AI ${i+1}...</span>
                                 <img src="${aiUrl}" onload="this.style.opacity=1" onerror="this.onerror=null; this.src='${fallbackUrl}'; this.style.opacity=1;">
                              </div>`;
                 });
                 out.innerHTML = html + "</div>";
             } catch (e) {
-                out.innerHTML = `<div style='text-align:center; margin-top:150px; color:red; font-weight:bold;'>Koneksi internet terputus. Silakan klik tombol Generate lagi Pak.</div>`;
+                out.innerHTML = `<div style='text-align:center; margin-top:150px; color:red; font-weight:bold;'>Gagal merakit hasil dari Gemini: <br><br> ${e.message}</div>`;
             }
-            b.disabled = false; b.innerText = "🚀 JALANKAN SEKARANG";
+            
+            b.disabled = false; b.innerText = "🚀 ROTASI & JALANKAN GEMINI";
         }
     </script>
 </body>
