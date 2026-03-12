@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CYZIO PRO V.11.3 | FRESH START</title>
+    <title>CYZIO PRO V.11.4 | FINAL BOSS DEFEATED</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #ff6b00; --bg: #050505; --panel: #0a0a0a; --border: #1f1f1f; }
@@ -25,7 +25,7 @@
 </head>
 <body>
     <aside class="sidebar">
-        <div class="header"><h1>CYZIO PRO</h1><p style="font-size: 10px; color: #555;">V.11.3 FRESH START</p></div>
+        <div class="header"><h1>CYZIO PRO</h1><p style="font-size: 10px; color: #555;">V.11.4 FINAL VICTORY</p></div>
         <div>
             <p style="font-size: 11px; margin-bottom: 8px; color: var(--primary); font-weight: bold;">PASTE SEPATUNYA DISINI (CTRL+V)</p>
             <div class="paste-box" id="pasteBox" tabindex="0">
@@ -37,11 +37,11 @@
         <button class="btn-gen" id="btn" onclick="generate()">🚀 JALANKAN IKLAN</button>
     </aside>
     <main class="main" id="out">
-        <div id="statusUpdate" style="text-align: center; margin-top: 100px; color: #222;">MENUNGGU SEPATU BAPAK...</div>
+        <div id="statusUpdate" style="text-align: center; margin-top: 100px; color: #222;">MENUNGGU KARYA BAPAK...</div>
     </main>
 
     <script>
-        // PAKAI API KEY DARI EMAIL BARU DISINI PAK!
+        // MASUKKAN API KEY DARI EMAIL BARU DISINI PAK!
         const API_KEY = "AIzaSyBqGyK4Q9Lfshyf5kHT3mIFP5_dXM90Eso";
 
         let FOTO_DATA = "";
@@ -67,14 +67,15 @@
             if (!FOTO_DATA) return alert("Paste fotonya dulu ya Pak.");
             const b = document.getElementById('btn');
             const out = document.getElementById('out');
-            b.disabled = true; b.innerText = "SEDANG BERUSAHA...";
-            out.innerHTML = "<div style='text-align:center; margin-top:100px; color:white;'>Meminta izin Google via jalur baru...</div>";
+            b.disabled = true; b.innerText = "BERHASIL TEMBUS!";
+            out.innerHTML = "<div style='text-align:center; margin-top:100px; color:white;'>Sedang merakit naskah dan model sepatu...</div>";
 
             const detail = document.getElementById('dInput').value || "Sepatu premium";
-            const prompt = `Analyze product: ${detail}. Create 1 Indonesian IG caption and 5 English image prompts. Format: [NASKAH]...[GAMBAR]1. prompt...`;
+            const prompt = `Analyze product: ${detail}. Create 1 Indonesian IG caption and 5 English image prompts for photorealistic AI generation with human models. Format: [NASKAH]...[GAMBAR]1. prompt...`;
 
             try {
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
+                // SAYA SUDAH GANTI NAMA MESIN MENJADI -latest AGAR GOOGLE MENERIMA KUNCI BAPAK
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${API_KEY}`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ contents: [{ parts: [{text: prompt}, {inlineData: {mimeType: FOTO_MIME, data: FOTO_DATA}}] }] })
                 });
