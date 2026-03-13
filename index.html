@@ -3,323 +3,217 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CYZIO PRO V.17 | COMMERCIAL ENGINE</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <title>CYZIO PRO | COMMERCIAL CONTENT GENERATOR</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #ff6b00; --bg: #050505; --panel: #0a0a0a; --border: #1a1a1a; --text: #e0e0e0; --text-dim: #888; }
+        :root { --primary: #ff6b00; --bg: #050505; --panel: #0a0a0a; --border: #1f1f1f; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background: var(--bg); color: var(--text); height: 100vh; display: flex; overflow: hidden; }
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
-
-        /* SIDEBAR STYLE */
-        .sidebar { width: 360px; background: var(--panel); border-right: 1px solid var(--border); padding: 30px; display: flex; flex-direction: column; gap: 25px; z-index: 10; box-shadow: 10px 0 30px rgba(0,0,0,0.5); }
-        .logo { text-align: center; margin-bottom: 10px; }
-        .logo h1 { font-size: 28px; font-weight: 800; letter-spacing: -1px; }
-        .logo h1 span { color: var(--primary); }
-        .dev-name { font-size: 10px; color: var(--text-dim); letter-spacing: 2px; text-transform: uppercase; margin-top: -5px; display: block; }
+        body { background: var(--bg); color: #fff; height: 100vh; display: flex; overflow: hidden; }
+        .sidebar { width: 400px; background: var(--panel); border-right: 1px solid var(--border); padding: 30px; display: flex; flex-direction: column; gap: 20px; z-index:10; }
+        .header h1 { font-size: 24px; font-weight: 800; color: var(--primary); }
+        .header p { font-size: 10px; color: #555; margin-top: 5px; letter-spacing: 1px; }
         
-        .paste-box { width: 100%; height: 160px; border: 2px dashed #333; border-radius: 12px; display: flex; align-items: center; justify-content: center; position: relative; cursor: pointer; transition: 0.3s; background: #080808; }
-        .paste-box:hover { border-color: var(--primary); background: rgba(255,107,0,0.03); }
-        .paste-box img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 10px; display: none; }
+        .paste-box { width: 100%; height: 180px; border: 2px dashed #333; border-radius: 12px; display: flex; align-items: center; justify-content: center; position: relative; transition: 0.3s; background: #080808; }
+        .paste-box img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 10px; display: none; z-index: 2; }
         
-        .input-label { font-size: 11px; color: var(--text-dim); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; display: block; }
-        .desc-input { width: 100%; background: #000; border: 1px solid #222; border-radius: 10px; padding: 15px; color: #fff; outline: none; transition: 0.3s; resize: none; font-size: 13px; line-height: 1.5; }
-        .desc-input:focus { border-color: var(--primary); }
+        .input-box { width: 100%; background: #000; border: 1px solid #222; border-radius: 10px; padding: 15px; color: #fff; outline: none; transition: 0.3s; resize: none; font-size: 13px; }
+        .input-box:focus { border-color: var(--primary); }
         
-        .status-panel { background: #000; border: 1px solid #222; border-radius: 10px; padding: 15px; font-size: 12px; color: #aaa; }
-        .key-indicator { color: var(--primary); font-weight: bold; }
+        .btn-gen { background: var(--primary); color: #fff; border: none; padding: 15px; border-radius: 10px; font-weight: 800; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+        .btn-gen:disabled { opacity: 0.5; cursor: wait; }
         
-        .btn-gen { background: var(--primary); color: #fff; border: none; padding: 18px; border-radius: 12px; font-weight: 800; cursor: pointer; transition: 0.3s; letter-spacing: 1px; font-size: 14px; text-transform: uppercase; margin-top: auto; }
-        .btn-gen:hover { background: #e65c00; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(255,107,0,0.15); }
-        .btn-gen:disabled { opacity: 0.4; cursor: wait; transform: none; box-shadow: none; }
+        .status-box { font-size: 11px; color: #888; text-align: center; margin-top: 10px; }
+        .status-box span { color: var(--primary); font-weight: bold; }
 
-        /* MAIN CONTENT STYLE */
-        .main { flex: 1; padding: 50px; overflow-y: auto; scroll-behavior: smooth; display: flex; flex-direction: column; gap: 40px; }
-        .welcome-screen { text-align: center; margin-top: 15vh; color: #222; animation: pulse 2s infinite; }
-        .welcome-screen h2 { font-size: 40px; font-weight: 800; letter-spacing: -1px; }
-
-        /* SECTION CARDS */
-        .section-card { background: #0a0a0a; border: 1px solid var(--border); border-radius: 16px; padding: 30px; position: relative; }
-        .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; border-bottom: 1px solid #1a1a1a; padding-bottom: 15px; }
-        .section-title { font-size: 18px; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 10px; }
-        .section-title::before { content: ''; display: block; width: 4px; height: 18px; background: var(--primary); border-radius: 2px; }
-        .copy-btn { background: #1a1a1a; color: var(--text-dim); border: 1px solid #222; padding: 8px 15px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; transition: 0.3s; text-transform: uppercase; }
-        .copy-btn:hover { background: #222; color: #fff; }
-
-        /* CONTENT STYLES */
-        .caption-content { font-size: 14px; line-height: 1.8; color: #b0b0b0; white-space: pre-wrap; }
+        .main { flex: 1; padding: 40px; overflow-y: auto; scroll-behavior: smooth; }
         
-        .list-container { display: flex; flex-direction: column; gap: 15px; }
-        .list-item { background: #050505; border: 1px solid #111; padding: 20px; border-radius: 12px; font-size: 13px; line-height: 1.6; color: #aaa; position: relative; }
-        .list-item strong { color: #fff; display: block; margin-bottom: 5px; font-size: 14px; }
-        .list-item::after { content: ''; position: absolute; left: 0; top: 20px; bottom: 20px; width: 2px; background: #222; border-radius: 1px; }
-
-        /* VISUAL GRID (Screenshots Style) */
-        .grid-visuals { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-        .visual-item { border-radius: 15px; overflow: hidden; border: 1px solid #1a1a1a; position: relative; background: #080808; min-height: 350px; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
-        .visual-item:hover { transform: translateY(-5px); border-color: #333; }
-        .visual-item img { width: 100%; height: 350px; object-fit: cover; position: absolute; top: 0; left: 0; z-index: 2; opacity: 0; transition: opacity 0.8s ease-in; }
-        .visual-label { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); padding: 20px; z-index: 3; color: #fff; font-size: 12px; font-weight: 600; line-height: 1.4; opacity: 0; transition: 0.5s; }
-        .visual-item:hover .visual-label { opacity: 1; }
-
-        /* ANIMATIONS */
+        .copy-card { background: #111; border: 1px solid #222; border-radius: 15px; padding: 30px; margin-bottom: 30px; border-left: 4px solid var(--primary); line-height: 1.8; font-size: 14px; color: #ddd; }
+        .copy-card strong { color: #fff; font-size: 16px; display: inline-block; margin-bottom: 10px; text-transform: uppercase; }
+        .section-title { color: var(--primary); font-weight: 800; margin-top: 25px; margin-bottom: 5px; font-size: 15px; text-transform: uppercase; }
+        
+        .grid-photos { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+        .photo-item { border-radius: 15px; overflow: hidden; border: 1px solid #222; position: relative; background: #0a0a0a; min-height: 350px; display: flex; align-items: center; justify-content: center; }
+        .photo-item img { width: 100%; height: 350px; object-fit: cover; position: absolute; top: 0; left: 0; z-index: 2; }
+        .loading-text { color: var(--primary); font-size: 12px; font-weight: 800; z-index: 1; text-transform: uppercase; animation: pulse 1.5s infinite; }
+        
         @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
-        @keyframes rotate { 100% { transform: rotate(360s); } }
-        .loading-spinner { width: 20px; height: 20px; border: 2px solid #1a1a1a; border-top-color: var(--primary); border-radius: 50%; animation: rotate 1s linear infinite; margin: 100px auto; }
-    
     </style>
 </head>
 <body>
-    
     <aside class="sidebar">
-        <div class="logo">
-            <h1>CYZIO <span>PRO</span></h1>
-            <span class="dev-name">Developer: M. HANAFIAH</span>
+        <div class="header">
+            <h1>CYZIO PRO</h1>
+            <p>DEVELOPER: M. HANAFIAH</p>
         </div>
         
         <div>
-            <span class="input-label">01. Paste Foto Produk (CTRL+V)</span>
-            <div class="paste-box" id="pasteBox" tabindex="0">
-                <span id="labelTxt" style="font-size: 12px; color: #444; font-weight:600;">Klik Kotak Ini & Paste</span>
+            <p style="font-size: 11px; margin-bottom: 8px; color: var(--primary); font-weight: bold;">01. PASTE FOTO (CTRL+V)</p>
+            <div class="paste-box" id="pasteBox">
+                <span id="labelTxt" style="font-size: 12px; color: #555; font-weight: bold; text-align:center;">Tidak Perlu Klik!<br><br>Cukup tekan CTRL+V<br>di mana saja di layar ini</span>
                 <img id="prev">
             </div>
         </div>
         
         <div>
-            <span class="input-label">02. Catatan Tambahan (Opsional)</span>
-            <textarea id="dInput" class="desc-input" rows="4" placeholder="Misal: Target market Gen-Z, tonjolkan fitur anti air..."></textarea>
+            <p style="font-size: 11px; margin-bottom: 8px; color: var(--primary); font-weight: bold; margin-top: 10px;">02. DETAIL PRODUK (OPSIONAL)</p>
+            <textarea id="dInput" class="input-box" style="height: 100px;" placeholder="Tulis detail sepatu di sini (misal: sepatu putih les hitam)..."></textarea>
         </div>
         
-        <div class="status-panel">
-            <div style="margin-bottom: 5px; display: flex; justify-content: space-between;">
-                <span>Status:</span>
-                <span id="statusTxt" style="font-weight: 700; color: #555;">Standby</span>
-            </div>
-            <div style="display: flex; justify-content: space-between;">
-                <span>API Key:</span>
-                <span class="key-indicator">Kunci <span id="keyIdx">01</span> / 28</span>
-            </div>
-        </div>
-        
-        <button class="btn-gen" id="btn" onclick="generate()">🚀 JALANKAN COMMERCIAL ENGINE</button>
+        <button class="btn-gen" id="btn" onclick="generate()">🚀 JALANKAN IKLAN</button>
+        <div class="status-box" id="statusInfo">Menggunakan Kunci API: <span>01 / 25</span></div>
     </aside>
     
     <main class="main" id="out">
-        <div class="welcome-screen">
-            <h2>CYZIO PRO</h2>
-            <p style="font-size: 14px; letter-spacing: 2px; margin-top: 10px;">COMMERCIAL CONTENT GENERATOR</p>
-        </div>
+        <div style="text-align: center; margin-top: 150px; color: #333; font-weight: 800; font-size: 20px; letter-spacing: 2px;">MENUNGGU KARYA BAPAK...</div>
     </main>
 
     <script>
         // ==========================================
-        // MASUKKAN 28 API KEY BAPAK DI SINI
+        // PAK HANAFIAH: COPY KUMPULAN KUNCI BAPAK DI ATAS
+        // LALU PASTE DI DALAM KURUNG SIKU DI BAWAH INI. 
+        // PASTIKAN SETIAP KUNCI DIAPIT TANDA KUTIP ('...')
         // ==========================================
         const apiKeys = [
-            AIzaSyAK_yHQFz_JCKE-wwYYQHIygmTYePUbwH4,AIzaSyB6Qa53GBXRRE2U8LVsWVXJ5RqUtDVUbCE,AIzaSyDiSIyfHMKIHf1tKhdEVQSfaU6SIihpChY,AIzaSyCsd72jfw7ulgmx_X-Ij_H5ZWc6nBzlgmk,AIzaSyDtRT_cEu5dp0nifcoAtPJ50Z3lDyXxLlY,AIzaSyAylMIUNaSuAauiPIKY2gUmcjJgh9fB350,AIzaSyAf5F4m2e8ITPJInPz3G6WpK-c5BK8zk08,AIzaSyA8KmL762stiDW5FbrYRUwrb-OGG2FJ6p4,AIzaSyCM3575RAXEtOTQXqOtCECWJAi6UR043fA,AIzaSyDMP4xbzx8D6JfOUqO33PGQhw6NoDM0Rm8,AIzaSyD-dc6b9NDklmD2uzlHm4Vgp82xk4afLdo
-AIzaSyBy0rkdB7Q8UP810H0inT5MJqE9SAnEpZU,AIzaSyBFlo6ABw57bI1Q9fu7g5po0x0Db_XS_Bk,AIzaSyAydiilFPeJRdLvVGhRioTIKIRLYPAJcCY,AIzaSyA434055s8T4RWk_Es8eJv9NJ2VVAeo3qw,AIzaSyCaUqSEaQwz9ifVfpavsMtP0WBAN48p1Mc
-AIzaSyDk2vzFGZgDVnxToB5qvuS8NyY-F2BK5g8,AIzaSyA54ihDYd2zCRU1aZA0fG3t_ATTUtx3BXM,AIzaSyDZWF67DHuMlcEfk7mkhfNLqhGgD3xI4zs,AIzaSyDeZKUJ2z9a4MVpyY_piReKAov9hZG1Jn8,AIzaSyDdhgbYr87HwKU_s08Z6b-Wngvpfqelc88
-AIzaSyDDToIfvQdGGG3DvPij_vmVWqyXLYS7WoY,AIzaSyBjHDOM0iNfUA4Sn1drPLRxc_d8xC_TrnI,AIzaSyBcg_nvYs8Cvn6eSil4Td52zEEg_J3Oh7E,AIzaSyB0aqD83OQ2Cp36Hj-8ofa7oWqEq5Kgvow
+            // CONTOH: 'AIzaSyAK_yHQFz...', 'AIzaSyB6Qa...', dst. Paste di sini Pak!
         ];
 
         let currentKeyIndex = 0;
         let FOTO_DATA = "";
         let FOTO_MIME = "";
 
-        // UPDATE UI KEY INDICATOR
-        function updateKeyUI() {
-            document.getElementById('keyIdx').innerText = (currentKeyIndex + 1).toString().padStart(2, '0');
-        }
-        updateKeyUI();
-
-        // PASTE IMAGE HANDLING
-        document.getElementById('pasteBox').addEventListener('paste', function(e) {
-            let item = e.clipboardData.items[0];
-            if (item && item.type.indexOf("image") !== -1) {
-                let blob = item.getAsFile();
-                let reader = new FileReader();
-                reader.onload = function(event) {
-                    document.getElementById('prev').src = event.target.result;
-                    document.getElementById('prev').style.display = 'block';
-                    document.getElementById('labelTxt').style.display = 'none';
-                    FOTO_DATA = event.target.result.split(',')[1];
-                    FOTO_MIME = blob.type;
-                };
-                reader.readAsDataURL(blob);
+        // TANGKAP PASTE DI SELURUH HALAMAN (BABI BUTA)
+        document.addEventListener('paste', function(e) {
+            let items = e.clipboardData.items;
+            for (let i = 0; i < items.length; i++) {
+                if (items[i].type.indexOf("image") !== -1) {
+                    let blob = items[i].getAsFile();
+                    let reader = new FileReader();
+                    reader.onload = function(event) {
+                        document.getElementById('prev').src = event.target.result;
+                        document.getElementById('prev').style.display = 'block';
+                        document.getElementById('labelTxt').style.display = 'none';
+                        FOTO_DATA = event.target.result.split(',')[1];
+                        FOTO_MIME = blob.type;
+                    };
+                    reader.readAsDataURL(blob);
+                    break;
+                }
             }
         });
 
-        // GENERATE FUNCTION (With Key Rotation)
         async function generate() {
-            if (!FOTO_DATA) return alert("Pak, tolong paste foto produk dulu di kotak.");
+            if (!FOTO_DATA) return alert("Pak, pastikan fotonya sudah muncul di kotak sebelah kiri. Tekan CTRL+V di mana saja untuk menempelkan foto.");
+            if (apiKeys.length === 0) return alert("Pak, API Key-nya belum dimasukkan ke dalam kode!");
             
             const btn = document.getElementById('btn');
             const out = document.getElementById('out');
-            const statusTxt = document.getElementById('statusTxt');
+            const statusInfo = document.getElementById('statusInfo');
             
             btn.disabled = true;
-            statusTxt.innerText = "Processing...";
-            statusTxt.style.color = "var(--primary)";
-            out.innerHTML = "<div class='loading-spinner'></div>";
+            btn.innerText = "MENGANALISIS FOTO...";
+            out.innerHTML = "<div style='text-align:center; margin-top:150px; color:var(--primary); font-weight:800; animation: pulse 1s infinite;'>MENGHUBUNGI MESIN GEMINI...</div>";
 
-            const additionalNotes = document.getElementById('dInput').value || "No specific notes";
-            
-            // Core Prompt - Focused on UGC, Commercial, and Image generation with models
-            const promptText = `Strictly Analyze this product image. It is white sneakers. Notes: ${additionalNotes}.
-Based on this image, generate marketing content in Indonesian. 
-You MUST format the output EXACTLY like this with delimiters:
+            const detail = document.getElementById('dInput').value || "produk di gambar ini";
+            const prompt = `Analyze this exact product image directly. Additional context: ${detail}.
+            Format your response EXACTLY like this:
+            [NASKAH]
+            (Write the Instagram Caption here in Indonesian)
+            [UGC]
+            (Write 3 concepts for UGC B-Roll video here in Indonesian)
+            [KOMERSIAL]
+            (Write 3 concepts for Commercial ad video here in Indonesian)
+            [GAMBAR]
+            1. (English prompt for photorealistic AI generation showing a model wearing this exact product)
+            2. (English prompt for AI image...)
+            3. (English prompt for AI image...)
+            4. (English prompt for AI image...)
+            5. (English prompt for AI image...)`;
 
-[CAPTION_IG]
-<A catchy Indonesian Instagram caption, casual yet selling, including emojis and hashtags>
+            let success = false;
+            let finalData = null;
+            let errorMessage = "";
 
-[UGC_BROLL]
-<List 5 concepts for User Generated Content (UGC) B-Roll shots. Format: "1. Concept name: description...">
-
-[COMMERCIAL_SCENES]
-<List 5 concepts for high-end commercial video scenes featuring a model wearing the shoes. Format: "1. Scene name: description...">
-
-[IMAGE_PROMPTS]
-<List 5 specific, descriptive English prompts for an AI image generator. The focus MUST be on a human model wearing these exact white sneakers in elegant, photorealistic settings (e.g., poolside, garden, cinematic street). Format: "1. Description...">`;
-
-            // ATTEMPT REQUEST WITH ROTATION
-            for (let attempt = 0; attempt < apiKeys.length; attempt++) {
-                updateKeyUI();
+            // ROTASI KUNCI OTOMATIS
+            for (let i = 0; i < apiKeys.length; i++) {
                 const currentKey = apiKeys[currentKeyIndex];
+                statusInfo.innerHTML = `Menggunakan Kunci API: <span>${(currentKeyIndex + 1).toString().padStart(2, '0')} / ${apiKeys.length}</span>`;
                 
                 try {
-                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${currentKey}`, {
-                        method: 'POST',
+                    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${currentKey}`, {
+                        method: 'POST', 
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            contents: [{
-                                parts: [
-                                    { text: promptText },
-                                    { inlineData: { mimeType: FOTO_MIME, data: FOTO_DATA } }
-                                ]
-                            }]
+                        body: JSON.stringify({ 
+                            contents: [{ parts: [{text: prompt}, {inlineData: {mimeType: FOTO_MIME, data: FOTO_DATA}}] }] 
                         })
                     });
 
-                    const data = await response.json();
-
-                    if (!response.ok) {
-                        if (response.status === 429) { // Quota exceeded
-                            console.warn(`Key ${currentKeyIndex + 1} limited. Rotating...`);
-                            currentKeyIndex = (currentKeyIndex + 1) % apiKeys.length;
-                            continue; // Try next key
-                        } else {
-                            throw new Error(data.error?.message || "Google menolak akses.");
-                        }
+                    const d = await res.json();
+                    
+                    if (res.ok) {
+                        finalData = d;
+                        success = true;
+                        break; 
+                    } else {
+                        errorMessage = d.error?.message || "Limit tercapai";
+                        currentKeyIndex = (currentKeyIndex + 1) % apiKeys.length;
                     }
-
-                    // SUCCESS! Process the output
-                    statusTxt.innerText = "Success";
-                    statusTxt.style.color = "#10b981";
-                    parseAndRender(data.candidates[0].content.parts[0].text);
-                    break; // Exit loop
-
-                } catch (error) {
-                    if (attempt === apiKeys.length - 1) { // Last key failed
-                        out.innerHTML = `<div style='text-align:center; color:red; margin-top:100px;'>Gagal menembus pertahanan Google setelah mencoba semua kunci Pak. <br><br> Error: ${error.message}</div>`;
-                        statusTxt.innerText = "Error";
-                        statusTxt.style.color = "red";
-                    }
+                } catch (e) {
+                    errorMessage = e.message;
+                    currentKeyIndex = (currentKeyIndex + 1) % apiKeys.length;
                 }
             }
+
+            if (!success) {
+                out.innerHTML = `<div style='text-align:center; margin-top:150px; color:red; font-weight:bold;'>Seluruh Kunci Gagal Menembus Google.<br><br>Pesan Error: ${errorMessage}</div>`;
+                btn.disabled = false; btn.innerText = "🚀 JALANKAN IKLAN";
+                return;
+            }
+
+            // MERAKIT TAMPILAN JIKA BERHASIL
+            try {
+                const txt = finalData.candidates[0].content.parts[0].text;
+                
+                let naskah = txt.includes('[NASKAH]') && txt.includes('[UGC]') ? txt.substring(txt.indexOf('[NASKAH]') + 8, txt.indexOf('[UGC]')).trim() : "Naskah iklan siap.";
+                let ugc = txt.includes('[UGC]') && txt.includes('[KOMERSIAL]') ? txt.substring(txt.indexOf('[UGC]') + 5, txt.indexOf('[KOMERSIAL]')).trim() : "Ide UGC siap.";
+                let komersial = txt.includes('[KOMERSIAL]') && txt.includes('[GAMBAR]') ? txt.substring(txt.indexOf('[KOMERSIAL]') + 11, txt.indexOf('[GAMBAR]')).trim() : "Ide komersial siap.";
+                
+                let pmpts = ["product shot", "lifestyle", "premium studio", "outdoor", "cinematic"];
+                if (txt.includes('[GAMBAR]')) {
+                    const gambarTxt = txt.substring(txt.indexOf('[GAMBAR]') + 8);
+                    const matches = gambarTxt.match(/\d+\.\s*(.*)/g);
+                    if (matches) pmpts = matches.map(p => p.replace(/\d+\.\s*/, '').trim());
+                }
+
+                let html = `
+                <div class="copy-card">
+                    <strong>NASKAH IKLAN:</strong><br><br>
+                    ${naskah.replace(/\n/g, '<br>')}
+                    
+                    <div class="section-title">🎥 B-ROLL UGC:</div>
+                    ${ugc.replace(/\n/g, '<br>')}
+                    
+                    <div class="section-title">🎬 SKENARIO KOMERSIAL:</div>
+                    ${komersial.replace(/\n/g, '<br>')}
+                </div>
+                <div class="grid-photos">`;
+                
+                pmpts.forEach((p, i) => {
+                    const seed = Math.floor(Math.random() * 99999);
+                    const cleanP = encodeURIComponent(p + ", high quality, photorealistic, 8k resolution");
+                    const aiUrl = `https://image.pollinations.ai/prompt/${cleanP}?width=800&height=800&nologo=true&seed=${seed}`;
+                    
+                    html += `
+                    <div class="photo-item">
+                        <span class="loading-text">Menarik Gambar AI ${i+1}...</span>
+                        <img src="${aiUrl}" onload="this.style.opacity=1" onerror="this.onerror=null; this.src='https://loremflickr.com/800/800/shoes?lock=${seed}';">
+                    </div>`;
+                });
+                out.innerHTML = html + "</div>";
+            } catch (e) {
+                out.innerHTML = `<div style='text-align:center; color:red;'>Gagal merakit teks: ${e.message}</div>`;
+            }
             
-            btn.disabled = false;
-        }
-
-        // PARSE & RENDER OUTPUT (Match Screenshots Layout)
-        function parseAndRender(rawText) {
-            const out = document.getElementById('out');
-            
-            // Extracting content using delimiters
-            const caption = rawText.match(/\[CAPTION_IG\]([\s\S]*?)\[/)?.[1].trim() || "";
-            const ugbData = rawText.match(/\[UGC_BROLL\]([\s\S]*?)\[/)?.[1].trim() || "";
-            const commData = rawText.match(/\[COMMERCIAL_SCENES\]([\s\S]*?)\[/)?.[1].trim() || "";
-            const promptsData = rawText.match(/\[IMAGE_PROMPTS\]([\s\S]*?)$/)?.[1].trim() || "";
-
-            // Parsing lists
-            const ugcBroll = ugbData.split('\n').filter(l => l.match(/^\d+\./)).map(l => l.replace(/^\d+\.\s*/, ''));
-            const commScenes = commData.split('\n').filter(l => l.match(/^\d+\.\s*/)).map(l => l.replace(/^\d+\.\s*/, ''));
-            const imagePrompts = promptsData.split('\n').filter(l => l.match(/^\d+\.\s*/)).map(l => l.replace(/^\d+\.\s*/, ''));
-
-            let mainHtml = "";
-
-            // 1. CAPTION SECTION
-            if (caption) {
-                mainHtml += `
-                    <div class="section-card">
-                        <div class="section-header">
-                            <h3 class="section-title">Indonesian Caption</h3>
-                            <button class="copy-btn" onclick="copyText('igCaption')">Copy</button>
-                        </div>
-                        <div class="caption-content" id="igCaption">${caption}</div>
-                    </div>`;
-            }
-
-            // 2. UGC B-ROLL SECTION
-            if (ugcBroll.length > 0) {
-                mainHtml += `
-                    <div class="section-card">
-                        <div class="section-header"><h3 class="section-title">UGC B-Roll Concepts</h3></div>
-                        <div class="list-container">
-                            ${ugcBroll.map(item => {
-                                const splitItem = item.split(':');
-                                return `<div class="list-item"><strong>${splitItem[0] || 'Shot'}</strong>${splitItem[1] || ''}</div>`;
-                            }).join('')}
-                        </div>
-                    </div>`;
-            }
-
-            // 3. COMMERCIAL SECTION
-            if (commScenes.length > 0) {
-                mainHtml += `
-                    <div class="section-card">
-                        <div class="section-header"><h3 class="section-title">Commercial Scenarios (With Model)</h3></div>
-                        <div class="list-container">
-                            ${commScenes.map(item => {
-                                const splitItem = item.split(':');
-                                return `<div class="list-item"><strong>${splitItem[0] || 'Scene'}</strong>${splitItem[1] || ''}</div>`;
-                            }).join('')}
-                        </div>
-                    </div>`;
-            }
-
-            // 4. IMAGE PROMPTS (With Pollinations integration to look like uploaded images)
-            if (imagePrompts.length > 0) {
-                mainHtml += `
-                    <div class="section-card">
-                        <div class="section-header"><h3 class="section-title">Visual Inspiration (AI Models)</h3></div>
-                        <div class="grid-visuals">
-                            ${imagePrompts.map((prompt, i) => {
-                                const seed = Math.floor(Math.random() * 99999);
-                                // Modifying prompt to ensure model is wearing THE SPECIFIC shoes (white sneakers)
-                                const enhancedPrompt = `${prompt}, model wearing white sneakers exactly like the reference, photorealistic, 8k, highly detailed, cinematic lighting`;
-                                const aiUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(enhancedPrompt)}?width=800&height=1000&nologo=true&seed=${seed}`;
-                                
-                                return `
-                                    <div class="visual-item">
-                                        <span class="loading-text">Generating Model ${i+1}...</span>
-                                        <img src="${aiUrl}" onload="this.style.opacity=1">
-                                        <div class="visual-label">${prompt}</div>
-                                    </div>`;
-                            }).join('')}
-                        </div>
-                    </div>`;
-            }
-
-            out.innerHTML = mainHtml;
-        }
-
-        // UTILITY: COPY TEXT
-        function copyText(elementId) {
-            const text = document.getElementById(elementId).innerText;
-            navigator.clipboard.writeText(text).then(() => {
-                alert("Teks berhasil disalin, Pak!");
-            });
+            btn.disabled = false; btn.innerText = "🚀 JALANKAN IKLAN";
         }
     </script>
 </body>
