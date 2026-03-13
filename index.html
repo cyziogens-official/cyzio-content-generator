@@ -3,76 +3,210 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CYZIO PRO | COMMERCIAL CONTENT GENERATOR</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap" rel="stylesheet">
+    <title>CYZIO PRO | COMMERCIAL CONTENT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
+                    colors: { zinc: { 750: '#2d2d33', 850: '#1f1f22', 950: '#09090b' } }
+                }
+            }
+        }
+    </script>
     <style>
-        :root { --primary: #ff6b00; --bg: #050505; --panel: #0a0a0a; --border: #1f1f1f; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background: var(--bg); color: #fff; height: 100vh; display: flex; overflow: hidden; }
-        .sidebar { width: 400px; background: var(--panel); border-right: 1px solid var(--border); padding: 30px; display: flex; flex-direction: column; gap: 20px; z-index:10; }
-        .header h1 { font-size: 24px; font-weight: 800; color: var(--primary); }
-        .header p { font-size: 10px; color: #555; margin-top: 5px; letter-spacing: 1px; }
+        .scrollbar-thin::-webkit-scrollbar { width: 6px; }
+        .scrollbar-thin::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 10px; }
+        .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
         
-        /* KOTAK UPLOAD FILE */
-        .upload-box { width: 100%; height: 180px; border: 2px dashed #333; border-radius: 12px; display: flex; align-items: center; justify-content: center; position: relative; transition: 0.3s; background: #080808; cursor: pointer; }
-        .upload-box:hover { border-color: var(--primary); background: rgba(255,107,0,0.05); }
-        .upload-box img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 10px; display: none; z-index: 2; pointer-events: none; }
+        /* Loading Animation */
+        .spinner-icon { animation: spin 1s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
         
-        .input-box { width: 100%; background: #000; border: 1px solid #222; border-radius: 10px; padding: 15px; color: #fff; outline: none; transition: 0.3s; resize: none; font-size: 13px; }
-        .input-box:focus { border-color: var(--primary); }
-        
-        .btn-gen { background: var(--primary); color: #fff; border: none; padding: 15px; border-radius: 10px; font-weight: 800; cursor: pointer; transition: 0.3s; margin-top: 10px; }
-        .btn-gen:disabled { opacity: 0.5; cursor: wait; }
-        
-        .status-box { font-size: 11px; color: #888; text-align: center; margin-top: 10px; }
-        .status-box span { color: var(--primary); font-weight: bold; }
-
-        .main { flex: 1; padding: 40px; overflow-y: auto; scroll-behavior: smooth; }
-        
-        /* TAMPILAN PERSIS SCREENSHOT BAPAK */
-        .copy-card { background: #111; border: 1px solid #222; border-radius: 15px; padding: 30px; margin-bottom: 30px; border-left: 4px solid var(--primary); line-height: 1.8; font-size: 14px; color: #ccc; }
-        .copy-card strong { color: #fff; font-size: 14px; display: inline-block; text-transform: uppercase; letter-spacing: 0.5px; }
-        
-        .grid-photos { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
-        .photo-item { border-radius: 15px; overflow: hidden; border: 1px solid #222; position: relative; background: #0a0a0a; min-height: 350px; display: flex; align-items: center; justify-content: center; }
-        .photo-item img { width: 100%; height: 350px; object-fit: cover; position: absolute; top: 0; left: 0; z-index: 2; }
-        .loading-text { color: var(--primary); font-size: 15px; font-weight: 800; z-index: 1; animation: pulse 1.5s infinite; }
-        
-        @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+        /* Tab Transition */
+        .tab-content { display: none; animation: fadeIn 0.5s; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body>
-    <aside class="sidebar">
-        <div class="header">
-            <h1>CYZIO PRO</h1>
-            <p>V.19 COMMERCIAL (FILE UPLOAD)</p>
-        </div>
+<body class="flex h-screen w-full bg-zinc-950 text-zinc-200 font-sans overflow-hidden selection:bg-orange-500/30">
+
+    <aside class="w-[380px] h-full bg-zinc-900 border-r border-zinc-800 flex flex-col z-20 shadow-2xl shrink-0">
         
-        <div>
-            <p style="font-size: 11px; margin-bottom: 8px; color: var(--primary); font-weight: bold;">01. UPLOAD FOTO PRODUK</p>
-            <label class="upload-box" for="fileInput">
-                <input type="file" id="fileInput" accept="image/*" style="display: none;">
-                <span id="labelTxt" style="font-size: 12px; color: #666; font-weight: bold; text-align:center; line-height: 1.5;">Klik Di Sini Untuk<br>Upload Foto File</span>
-                <img id="prev">
-            </label>
+        <div class="flex items-center justify-between p-4 border-b border-zinc-800 bg-zinc-950/50">
+            <div>
+                <h1 class="text-lg font-extrabold tracking-tight bg-gradient-to-r from-orange-400 to-rose-500 text-transparent bg-clip-text">CYZIO CONTENT</h1>
+                <p class="text-[10px] font-medium tracking-widest text-zinc-500">ULTRA V.20 PRO</p>
+            </div>
+            <div class="flex items-center space-x-3">
+                <div class="text-right hidden sm:block">
+                    <p class="text-[10px] text-zinc-500">Developer:</p>
+                    <p class="text-xs font-medium text-zinc-300">M. Hanafiah</p>
+                </div>
+                <button class="p-2 bg-zinc-800 hover:bg-zinc-700 rounded-lg text-zinc-400 transition-colors">
+                    <i data-lucide="log-out" class="w-4 h-4"></i>
+                </button>
+            </div>
         </div>
-        
-        <div>
-            <p style="font-size: 11px; margin-bottom: 8px; color: var(--primary); font-weight: bold; margin-top: 10px;">02. DETAIL PRODUK (OPSIONAL)</p>
-            <textarea id="dInput" class="input-box" style="height: 100px;" placeholder="Tulis deskripsi sepatu di sini (misal: sepatu hitam dengan les putih)..."></textarea>
+
+        <div class="flex-1 overflow-y-auto p-5 space-y-8 scrollbar-thin">
+            
+            <section class="space-y-4">
+                <h2 class="text-xs font-bold text-zinc-400 tracking-wider uppercase">1. Produk Utama</h2>
+                
+                <input type="file" id="mainPhotoInput" class="hidden" accept="image/*" />
+                <div id="uploadBox" onclick="document.getElementById('mainPhotoInput').click()" class="border-2 border-dashed border-zinc-700 hover:border-orange-500/50 bg-zinc-950/50 rounded-xl flex flex-col items-center justify-center transition-colors group relative overflow-hidden min-h-[140px] cursor-pointer">
+                    
+                    <div id="uploadPlaceholder" class="flex flex-col items-center">
+                        <div class="p-3 bg-zinc-800 group-hover:bg-orange-500/20 rounded-full mb-3 transition-colors">
+                            <i data-lucide="upload-cloud" class="w-6 h-6 text-zinc-400 group-hover:text-orange-400"></i>
+                        </div>
+                        <p class="text-sm font-medium text-zinc-300">Upload Foto Produk</p>
+                    </div>
+
+                    <img id="mainPhotoPreview" class="w-full h-full object-cover absolute inset-0 hidden" />
+                    <button id="removePhotoBtn" onclick="removePhoto(event)" class="hidden absolute top-2 right-2 p-1.5 bg-black/60 hover:bg-red-500/80 text-white rounded-lg backdrop-blur-md transition-colors z-10">
+                        <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                    </button>
+                </div>
+
+                <textarea id="descInput" placeholder="Deskripsi produk (Warna, Bahan, Kegunaan)..." class="w-full h-24 bg-zinc-950 border border-zinc-700 rounded-xl p-3 text-sm text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 resize-none transition-all"></textarea>
+            </section>
+
+            <section class="space-y-4">
+                <h2 class="text-xs font-bold text-zinc-400 tracking-wider uppercase">2. Strategi Model</h2>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-[10px] text-zinc-500 mb-1 block">Gender Target</label>
+                        <div class="relative">
+                            <select id="genderInput" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg pl-3 pr-8 py-2 text-sm text-zinc-200 appearance-none focus:outline-none focus:border-orange-500">
+                                <option value="Unisex">Auto (Sesuai Produk)</option>
+                                <option value="Pria">Pria</option>
+                                <option value="Wanita">Wanita</option>
+                            </select>
+                            <i data-lucide="chevron-down" class="w-3.5 h-3.5 absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-[10px] text-zinc-500 mb-1 block">Usia Target</label>
+                        <div class="relative">
+                            <select id="ageInput" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg pl-3 pr-8 py-2 text-sm text-zinc-200 appearance-none focus:outline-none focus:border-orange-500">
+                                <option value="20s">Dewasa Muda (20s)</option>
+                                <option value="Teens">Remaja (Teens)</option>
+                                <option value="30s">Dewasa (30s-40s)</option>
+                            </select>
+                            <i data-lucide="chevron-down" class="w-3.5 h-3.5 absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none"></i>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="space-y-4">
+                <h2 class="text-xs font-bold text-zinc-400 tracking-wider uppercase">3. Pengaturan Iklan</h2>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-[10px] text-zinc-500 mb-1 block">Tipe Iklan</label>
+                        <div class="relative">
+                            <select id="typeInput" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg pl-3 pr-8 py-2 text-sm text-zinc-200 appearance-none focus:outline-none focus:border-orange-500">
+                                <option value="Soft Selling yang Aesthetic dan elegan">Soft Selling (Aesthetic)</option>
+                                <option value="Hard Selling yang Promo agresif">Hard Selling (Promo)</option>
+                                <option value="Edukasi dan Tutorial pemakaian">Edukasi / Tutorial</option>
+                            </select>
+                            <i data-lucide="chevron-down" class="w-3.5 h-3.5 absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-[10px] text-zinc-500 mb-1 block">Bahasa</label>
+                        <div class="relative">
+                            <select id="langInput" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg pl-3 pr-8 py-2 text-sm text-zinc-200 appearance-none focus:outline-none focus:border-orange-500">
+                                <option value="Bahasa Indonesia Gaul">Indonesia</option>
+                                <option value="English">English</option>
+                            </select>
+                            <i data-lucide="chevron-down" class="w-3.5 h-3.5 absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none"></i>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </div>
-        
-        <button class="btn-gen" id="btn" onclick="generate()">🚀 JALANKAN IKLAN</button>
-        <div class="status-box" id="statusInfo">Menggunakan Kunci API: <span>01 / 28</span></div>
+
+        <div class="p-5 border-t border-zinc-800 bg-zinc-900 z-10 shrink-0">
+            <div id="keyStatus" class="text-[10px] text-zinc-500 text-center mb-2 font-mono">Status: Standby | Key: 01/25</div>
+            <button id="generateBtn" onclick="generateContent()" class="w-full py-3.5 rounded-xl font-bold flex items-center justify-center space-x-2 transition-all duration-300 text-sm bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white shadow-[0_0_20px_rgba(249,115,22,0.3)]">
+                <span id="btnText">GENERATE KONTEN!</span>
+                <i data-lucide="sparkles" id="btnIcon" class="w-4 h-4"></i>
+            </button>
+        </div>
     </aside>
-    
-    <main class="main" id="out">
-        <div style="text-align: center; margin-top: 150px; color: #333; font-weight: 800; font-size: 20px; letter-spacing: 2px;">MENUNGGU KARYA BAPAK...</div>
+
+    <main class="flex-1 flex flex-col h-full bg-zinc-950 relative">
+        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-blend-overlay opacity-20 pointer-events-none"></div>
+
+        <header class="flex justify-between items-center px-6 h-16 border-b border-zinc-800 bg-zinc-950/80 backdrop-blur-md z-10">
+            <div class="flex space-x-8 h-full">
+                <button onclick="switchTab('tab-naskah')" id="btn-tab-naskah" class="tab-btn relative flex items-center space-x-2 h-full px-2 transition-colors text-orange-500 font-bold">
+                    <span class="text-sm tracking-wide">CAPTION IG</span>
+                    <span id="indicator-naskah" class="absolute bottom-0 left-0 w-full h-0.5 bg-orange-500 rounded-t-full"></span>
+                </button>
+                <button onclick="switchTab('tab-ugc')" id="btn-tab-ugc" class="tab-btn relative flex items-center space-x-2 h-full px-2 transition-colors text-zinc-500 hover:text-zinc-300 font-medium">
+                    <span class="text-sm tracking-wide">UGC & B-ROLL</span>
+                    <span id="indicator-ugc" class="hidden absolute bottom-0 left-0 w-full h-0.5 bg-orange-500 rounded-t-full"></span>
+                </button>
+                <button onclick="switchTab('tab-komersial')" id="btn-tab-komersial" class="tab-btn relative flex items-center space-x-2 h-full px-2 transition-colors text-zinc-500 hover:text-zinc-300 font-medium">
+                    <span class="text-sm tracking-wide">COMMERCIAL</span>
+                    <span id="indicator-komersial" class="hidden absolute bottom-0 left-0 w-full h-0.5 bg-orange-500 rounded-t-full"></span>
+                </button>
+                <button onclick="switchTab('tab-gambar')" id="btn-tab-gambar" class="tab-btn relative flex items-center space-x-2 h-full px-2 transition-colors text-zinc-500 hover:text-zinc-300 font-medium">
+                    <span class="text-sm tracking-wide">VISUAL AI</span>
+                    <span id="indicator-gambar" class="hidden absolute bottom-0 left-0 w-full h-0.5 bg-orange-500 rounded-t-full"></span>
+                </button>
+            </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-8 flex flex-col relative z-10 scrollbar-thin">
+            
+            <div id="emptyState" class="flex-1 flex flex-col items-center justify-center opacity-60">
+                <div class="w-20 h-20 bg-zinc-900 rounded-2xl flex items-center justify-center mb-4 border border-zinc-800 shadow-inner">
+                    <i data-lucide="image" class="w-8 h-8 text-zinc-600"></i>
+                </div>
+                <h3 class="text-lg font-medium text-zinc-400">Belum ada konten.</h3>
+                <p class="text-sm text-zinc-600 mt-1">Upload foto di panel kiri & klik Generate!</p>
+            </div>
+
+            <div id="resultState" class="hidden w-full max-w-5xl mx-auto">
+                
+                <div id="tab-naskah" class="tab-content active bg-zinc-900 border border-zinc-800 p-8 rounded-2xl shadow-2xl">
+                    <h2 class="text-xl font-bold text-white mb-6 flex items-center"><i data-lucide="instagram" class="w-5 h-5 mr-3 text-pink-500"></i> Naskah Instagram</h2>
+                    <div id="res-naskah" class="text-zinc-300 whitespace-pre-wrap leading-relaxed"></div>
+                </div>
+
+                <div id="tab-ugc" class="tab-content bg-zinc-900 border border-zinc-800 p-8 rounded-2xl shadow-2xl">
+                    <h2 class="text-xl font-bold text-white mb-6 flex items-center"><i data-lucide="video" class="w-5 h-5 mr-3 text-blue-500"></i> Konsep Video UGC / B-Roll</h2>
+                    <div id="res-ugc" class="text-zinc-300 whitespace-pre-wrap leading-relaxed"></div>
+                </div>
+
+                <div id="tab-komersial" class="tab-content bg-zinc-900 border border-zinc-800 p-8 rounded-2xl shadow-2xl">
+                    <h2 class="text-xl font-bold text-white mb-6 flex items-center"><i data-lucide="clapperboard" class="w-5 h-5 mr-3 text-orange-500"></i> Skenario Iklan Komersial</h2>
+                    <div id="res-komersial" class="text-zinc-300 whitespace-pre-wrap leading-relaxed"></div>
+                </div>
+
+                <div id="tab-gambar" class="tab-content">
+                    <div id="res-gambar" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        </div>
+                </div>
+
+            </div>
+        </div>
     </main>
 
     <script>
+        // Inisialisasi Icons
+        lucide.createIcons();
+
         // ==========================================
-        // MASUKKAN 28 API KEY BAPAK DI SINI
+        // MASUKKAN 25+ KUNCI API BAPAK DI SINI
         // ==========================================
         const apiKeys = [
             // 'AIzaSyAK_yHQFz_JCKE-wwYYQHIygmTYePUbwH4','AIzaSyB6Qa53GBXRRE2U8LVsWVXJ5RqUtDVUbCE','AIzaSyDiSIyfHMKIHf1tKhdEVQSfaU6SIihpChY','AIzaSyCsd72jfw7ulgmx_X-Ij_H5ZWc6nBzlgmk','AIzaSyDtRT_cEu5dp0nifcoAtPJ50Z3lDyXxLlY','AIzaSyAylMIUNaSuAauiPIKY2gUmcjJgh9fB350','AIzaSyAf5F4m2e8ITPJInPz3G6WpK-c5BK8zk08','AIzaSyA8KmL762stiDW5FbrYRUwrb-OGG2FJ6p4','AIzaSyCM3575RAXEtOTQXqOtCECWJAi6UR043fA','AIzaSyDMP4xbzx8D6JfOUqO33PGQhw6NoDM0Rm8','AIzaSyD-dc6b9NDklmD2uzlHm4Vgp82xk4afLdo
@@ -82,19 +216,22 @@ AIzaSyDDToIfvQdGGG3DvPij_vmVWqyXLYS7WoY','AIzaSyBjHDOM0iNfUA4Sn1drPLRxc_d8xC_Trn
         ];
 
         let currentKeyIndex = 0;
-        let FOTO_DATA = "";
-        let FOTO_MIME = "";
+        let FOTO_DATA = null;
+        let FOTO_MIME = null;
 
-        // SISTEM UPLOAD FILE (TIDAK PAKAI PASTE LAGI)
-        document.getElementById('fileInput').addEventListener('change', function(e) {
-            let file = e.target.files[0];
+        // FUNGSI UPLOAD FOTO (ANTI-GAGAL)
+        const fileInput = document.getElementById('mainPhotoInput');
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
             if (file) {
-                let reader = new FileReader();
+                const reader = new FileReader();
                 reader.onload = function(event) {
-                    document.getElementById('prev').src = event.target.result;
-                    document.getElementById('prev').style.display = 'block';
-                    document.getElementById('labelTxt').style.display = 'none';
-                    // Ambil raw base64 data untuk dikirim ke Gemini
+                    document.getElementById('mainPhotoPreview').src = event.target.result;
+                    document.getElementById('mainPhotoPreview').classList.remove('hidden');
+                    document.getElementById('removePhotoBtn').classList.remove('hidden');
+                    document.getElementById('uploadPlaceholder').classList.add('hidden');
+                    document.getElementById('uploadBox').classList.remove('border-dashed');
+                    
                     FOTO_DATA = event.target.result.split(',')[1];
                     FOTO_MIME = file.type;
                 };
@@ -102,40 +239,79 @@ AIzaSyDDToIfvQdGGG3DvPij_vmVWqyXLYS7WoY','AIzaSyBjHDOM0iNfUA4Sn1drPLRxc_d8xC_Trn
             }
         });
 
-        async function generate() {
-            if (!FOTO_DATA) return alert("Pak, silakan klik kotak atas untuk meng-upload foto terlebih dahulu.");
-            if (apiKeys.length === 0) return alert("Pak, API Key-nya belum dimasukkan ke dalam kode!");
-            
-            const btn = document.getElementById('btn');
-            const out = document.getElementById('out');
-            const statusInfo = document.getElementById('statusInfo');
-            
-            btn.disabled = true;
-            btn.innerText = "MENGANALISIS FOTO...";
-            out.innerHTML = "<div style='text-align:center; margin-top:150px; color:var(--primary); font-weight:800; animation: pulse 1s infinite;'>MENGHUBUNGI MESIN GEMINI...</div>";
+        function removePhoto(e) {
+            e.stopPropagation();
+            fileInput.value = '';
+            FOTO_DATA = null;
+            document.getElementById('mainPhotoPreview').classList.add('hidden');
+            document.getElementById('removePhotoBtn').classList.add('hidden');
+            document.getElementById('uploadPlaceholder').classList.remove('hidden');
+            document.getElementById('uploadBox').classList.add('border-dashed');
+        }
 
-            const detail = document.getElementById('dInput').value || "produk di gambar ini";
-            const prompt = `Analyze this exact product image very closely. The content MUST be highly tailored to the specific design, color, and vibe of the uploaded image. Additional context: ${detail}.
-            Format your response EXACTLY like this:
+        // FUNGSI SWITCH TAB
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.remove('text-orange-500', 'font-bold');
+                el.classList.add('text-zinc-500', 'font-medium');
+            });
+            document.querySelectorAll('[id^="indicator-"]').forEach(el => el.classList.add('hidden'));
+
+            document.getElementById(tabId).classList.add('active');
+            document.getElementById('btn-' + tabId).classList.remove('text-zinc-500', 'font-medium');
+            document.getElementById('btn-' + tabId).classList.add('text-orange-500', 'font-bold');
+            document.getElementById('indicator-' + tabId.replace('tab-', '')).classList.remove('hidden');
+        }
+
+        // FUNGSI UTAMA GENERATE DARI GEMINI
+        async function generateContent() {
+            if (!FOTO_DATA) return alert("Pak, tolong upload foto produknya dulu.");
+            if (apiKeys.length === 0) return alert("Pak, Kunci API belum dimasukkan ke dalam kode GitHub.");
+
+            const btn = document.getElementById('generateBtn');
+            const btnText = document.getElementById('btnText');
+            const btnIcon = document.getElementById('btnIcon');
+            const keyStatus = document.getElementById('keyStatus');
+            
+            // UI Loading State
+            btn.disabled = true;
+            btn.classList.replace('from-orange-500', 'from-zinc-700');
+            btn.classList.replace('to-amber-500', 'to-zinc-600');
+            btnText.innerText = "MEMPROSES AI...";
+            btnIcon.setAttribute('data-lucide', 'loader-2');
+            btnIcon.classList.add('spinner-icon');
+            lucide.createIcons();
+
+            // AMBIL DATA DARI FORM REACT BAPAK
+            const desc = document.getElementById('descInput').value || "Produk ini";
+            const gender = document.getElementById('genderInput').value;
+            const age = document.getElementById('ageInput').value;
+            const type = document.getElementById('typeInput').value;
+            const lang = document.getElementById('langInput').value;
+
+            // PROMPT DINAMIS SESUAI INPUT FORM
+            const prompt = `Analyze this exact product image directly. Context: ${desc}. Target Audience: ${gender}, ${age}. Ad Type: ${type}. Language: ${lang}.
+            Format your response EXACTLY like this (do not use markdown blocks for the main tags):
             [NASKAH]
-            (Write a catchy Instagram Caption here in Indonesian)
+            (Write the Caption here)
             [UGC]
-            (Write 3 concepts for UGC B-Roll video here in Indonesian)
+            (Write 3 B-Roll concepts here)
             [KOMERSIAL]
-            (Write 3 concepts for Commercial ad video here in Indonesian)
+            (Write 3 Commercial concepts here)
             [GAMBAR]
-            1. (English prompt for photorealistic AI generation showing a model wearing this exact product)
+            1. (English prompt for photorealistic AI generation showing a model wearing/using this exact product)
             2. (English prompt for AI image...)
-            3. (English prompt for AI image...)`;
+            3. (English prompt for AI image...)
+            4. (English prompt for AI image...)`;
 
             let success = false;
             let finalData = null;
-            let errorMessage = "";
 
-            // ROTASI KUNCI OTOMATIS
+            // ROTASI KUNCI (MENCEGAH ERROR MUTER-MUTER)
             for (let i = 0; i < apiKeys.length; i++) {
                 const currentKey = apiKeys[currentKeyIndex];
-                statusInfo.innerHTML = `Menggunakan Kunci API: <span>${(currentKeyIndex + 1).toString().padStart(2, '0')} / ${apiKeys.length}</span>`;
+                keyStatus.innerText = `Status: Mengetuk Pintu | Key: ${currentKeyIndex + 1}/${apiKeys.length}`;
                 
                 try {
                     const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${currentKey}`, {
@@ -153,68 +329,79 @@ AIzaSyDDToIfvQdGGG3DvPij_vmVWqyXLYS7WoY','AIzaSyBjHDOM0iNfUA4Sn1drPLRxc_d8xC_Trn
                         success = true;
                         break; 
                     } else {
-                        errorMessage = d.error?.message || "Limit tercapai";
                         currentKeyIndex = (currentKeyIndex + 1) % apiKeys.length;
                     }
                 } catch (e) {
-                    errorMessage = e.message;
                     currentKeyIndex = (currentKeyIndex + 1) % apiKeys.length;
                 }
             }
 
+            // RESTORE BUTTON STATE
+            btn.disabled = false;
+            btn.classList.replace('from-zinc-700', 'from-orange-500');
+            btn.classList.replace('to-zinc-600', 'to-amber-500');
+            btnText.innerText = "GENERATE KONTEN!";
+            btnIcon.setAttribute('data-lucide', 'sparkles');
+            btnIcon.classList.remove('spinner-icon');
+            lucide.createIcons();
+
             if (!success) {
-                out.innerHTML = `<div style='text-align:center; margin-top:150px; color:red; font-weight:bold;'>Seluruh Kunci Gagal Menembus Google.<br><br>Pesan Error: ${errorMessage}</div>`;
-                btn.disabled = false; btn.innerText = "🚀 JALANKAN IKLAN";
+                alert("Semua API Key gagal menembus Google (Limit/Error). Silakan coba lagi nanti.");
+                keyStatus.innerText = "Status: GAGAL | Semua Key Limit";
                 return;
             }
 
-            // MERAKIT TAMPILAN SESUAI SCREENSHOT
+            // PARSING DATA DAN RENDER KE TAB
             try {
+                keyStatus.innerText = `Status: BERHASIL! | Key: ${currentKeyIndex + 1}/${apiKeys.length}`;
+                document.getElementById('emptyState').classList.add('hidden');
+                document.getElementById('resultState').classList.remove('hidden');
+                
                 const txt = finalData.candidates[0].content.parts[0].text;
                 
                 let naskah = txt.includes('[NASKAH]') && txt.includes('[UGC]') ? txt.substring(txt.indexOf('[NASKAH]') + 8, txt.indexOf('[UGC]')).trim() : "Naskah iklan siap.";
                 let ugc = txt.includes('[UGC]') && txt.includes('[KOMERSIAL]') ? txt.substring(txt.indexOf('[UGC]') + 5, txt.indexOf('[KOMERSIAL]')).trim() : "Ide UGC siap.";
                 let komersial = txt.includes('[KOMERSIAL]') && txt.includes('[GAMBAR]') ? txt.substring(txt.indexOf('[KOMERSIAL]') + 11, txt.indexOf('[GAMBAR]')).trim() : "Ide komersial siap.";
                 
-                let pmpts = ["model wearing the product, high quality", "lifestyle product photography", "cinematic product shot"];
+                document.getElementById('res-naskah').innerHTML = naskah.replace(/\n/g, '<br>');
+                document.getElementById('res-ugc').innerHTML = ugc.replace(/\n/g, '<br>');
+                document.getElementById('res-komersial').innerHTML = komersial.replace(/\n/g, '<br>');
+
+                // RENDER GAMBAR KE TAB VISUAL AI
+                let pmpts = ["model wearing the product, high quality", "lifestyle product photography"];
                 if (txt.includes('[GAMBAR]')) {
                     const gambarTxt = txt.substring(txt.indexOf('[GAMBAR]') + 8);
                     const matches = gambarTxt.match(/\d+\.\s*(.*)/g);
                     if (matches) pmpts = matches.map(p => p.replace(/\d+\.\s*/, '').trim());
                 }
 
-                // FORMAT KARTU NASKAH PERSIS SCREENSHOT (1 KOTAK BESAR)
-                let html = `
-                <div class="copy-card">
-                    <strong style="margin-bottom:15px;">NASKAH IKLAN:</strong><br>
-                    <div style="margin-bottom: 30px;">${naskah.replace(/\n/g, '<br>')}</div>
-                    
-                    <strong style="margin-bottom:15px;">🎥 B-ROLL UGC:</strong><br>
-                    <div style="margin-bottom: 30px;">${ugc.replace(/\n/g, '<br>')}</div>
-                    
-                    <strong style="margin-bottom:15px;">🎬 SKENARIO KOMERSIAL:</strong><br>
-                    <div>${komersial.replace(/\n/g, '<br>')}</div>
-                </div>
-                <div class="grid-photos">`;
-                
+                let gambarHtml = "";
                 pmpts.forEach((p, i) => {
                     const seed = Math.floor(Math.random() * 99999);
                     const cleanP = encodeURIComponent(p + ", high quality, photorealistic, 8k resolution");
-                    const aiUrl = `https://image.pollinations.ai/prompt/${cleanP}?width=800&height=800&nologo=true&seed=${seed}`;
+                    const aiUrl = `https://image.pollinations.ai/prompt/${cleanP}?width=600&height=900&nologo=true&seed=${seed}`;
                     
-                    // KOTAK GAMBAR PERSIS SCREENSHOT (Hanya gambar dan tulisan 'Koneksi Terputus' jika gagal)
-                    html += `
-                    <div class="photo-item">
-                        <span class="loading-text" style="color:#ff6b00; text-transform:none;">Koneksi Terputus</span>
-                        <img src="${aiUrl}" onload="this.style.opacity=1" onerror="this.onerror=null; this.src='https://loremflickr.com/800/800/shoes?lock=${seed}';">
+                    gambarHtml += `
+                    <div class="group relative aspect-[9/16] bg-zinc-900 rounded-2xl border border-zinc-800 overflow-hidden shadow-xl hover:border-orange-500/50 transition-all">
+                        <div class="absolute inset-0 bg-gradient-to-br from-zinc-800 to-zinc-950 flex items-center justify-center z-0">
+                            <span class="text-xs text-zinc-600 font-bold tracking-widest uppercase animate-pulse">Merakit Visual...</span>
+                        </div>
+                        <img src="${aiUrl}" class="w-full h-full object-cover relative z-10" onload="this.style.opacity=1" style="opacity:0; transition: opacity 0.5s;" onerror="this.onerror=null; this.src='https://loremflickr.com/600/900/shoes?lock=${seed}'; this.style.opacity=1;">
+                        
+                        <div class="absolute bottom-0 inset-x-0 p-4 bg-gradient-to-t from-black/90 via-black/50 to-transparent z-20">
+                            <p class="text-[11px] text-zinc-300 line-clamp-2">${p}</p>
+                        </div>
                     </div>`;
                 });
-                out.innerHTML = html + "</div>";
+                
+                document.getElementById('res-gambar').innerHTML = gambarHtml;
+                
+                // Otomatis pindah ke tab Naskah setelah generate selesai
+                switchTab('tab-naskah');
+
             } catch (e) {
-                out.innerHTML = `<div style='text-align:center; color:red;'>Gagal merakit teks: ${e.message}</div>`;
+                alert("Gagal merakit teks dari Google: " + e.message);
             }
-            
-            btn.disabled = false; btn.innerText = "🚀 JALANKAN IKLAN";
         }
     </script>
 </body>
