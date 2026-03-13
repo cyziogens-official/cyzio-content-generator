@@ -13,8 +13,10 @@
         .header h1 { font-size: 24px; font-weight: 800; color: var(--primary); }
         .header p { font-size: 10px; color: #555; margin-top: 5px; letter-spacing: 1px; }
         
-        .paste-box { width: 100%; height: 180px; border: 2px dashed #333; border-radius: 12px; display: flex; align-items: center; justify-content: center; position: relative; transition: 0.3s; background: #080808; }
-        .paste-box img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 10px; display: none; z-index: 2; }
+        /* KOTAK UPLOAD FILE */
+        .upload-box { width: 100%; height: 180px; border: 2px dashed #333; border-radius: 12px; display: flex; align-items: center; justify-content: center; position: relative; transition: 0.3s; background: #080808; cursor: pointer; }
+        .upload-box:hover { border-color: var(--primary); background: rgba(255,107,0,0.05); }
+        .upload-box img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 10px; display: none; z-index: 2; pointer-events: none; }
         
         .input-box { width: 100%; background: #000; border: 1px solid #222; border-radius: 10px; padding: 15px; color: #fff; outline: none; transition: 0.3s; resize: none; font-size: 13px; }
         .input-box:focus { border-color: var(--primary); }
@@ -27,14 +29,14 @@
 
         .main { flex: 1; padding: 40px; overflow-y: auto; scroll-behavior: smooth; }
         
-        .copy-card { background: #111; border: 1px solid #222; border-radius: 15px; padding: 30px; margin-bottom: 30px; border-left: 4px solid var(--primary); line-height: 1.8; font-size: 14px; color: #ddd; }
-        .copy-card strong { color: #fff; font-size: 16px; display: inline-block; margin-bottom: 10px; text-transform: uppercase; }
-        .section-title { color: var(--primary); font-weight: 800; margin-top: 25px; margin-bottom: 5px; font-size: 15px; text-transform: uppercase; }
+        /* TAMPILAN PERSIS SCREENSHOT BAPAK */
+        .copy-card { background: #111; border: 1px solid #222; border-radius: 15px; padding: 30px; margin-bottom: 30px; border-left: 4px solid var(--primary); line-height: 1.8; font-size: 14px; color: #ccc; }
+        .copy-card strong { color: #fff; font-size: 14px; display: inline-block; text-transform: uppercase; letter-spacing: 0.5px; }
         
         .grid-photos { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
         .photo-item { border-radius: 15px; overflow: hidden; border: 1px solid #222; position: relative; background: #0a0a0a; min-height: 350px; display: flex; align-items: center; justify-content: center; }
         .photo-item img { width: 100%; height: 350px; object-fit: cover; position: absolute; top: 0; left: 0; z-index: 2; }
-        .loading-text { color: var(--primary); font-size: 12px; font-weight: 800; z-index: 1; text-transform: uppercase; animation: pulse 1.5s infinite; }
+        .loading-text { color: var(--primary); font-size: 15px; font-weight: 800; z-index: 1; animation: pulse 1.5s infinite; }
         
         @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
     </style>
@@ -43,24 +45,25 @@
     <aside class="sidebar">
         <div class="header">
             <h1>CYZIO PRO</h1>
-            <p>DEVELOPER: M. HANAFIAH</p>
+            <p>V.19 COMMERCIAL (FILE UPLOAD)</p>
         </div>
         
         <div>
-            <p style="font-size: 11px; margin-bottom: 8px; color: var(--primary); font-weight: bold;">01. PASTE FOTO (CTRL+V)</p>
-            <div class="paste-box" id="pasteBox">
-                <span id="labelTxt" style="font-size: 12px; color: #555; font-weight: bold; text-align:center;">Tidak Perlu Klik!<br><br>Cukup tekan CTRL+V<br>di mana saja di layar ini</span>
+            <p style="font-size: 11px; margin-bottom: 8px; color: var(--primary); font-weight: bold;">01. UPLOAD FOTO PRODUK</p>
+            <label class="upload-box" for="fileInput">
+                <input type="file" id="fileInput" accept="image/*" style="display: none;">
+                <span id="labelTxt" style="font-size: 12px; color: #666; font-weight: bold; text-align:center; line-height: 1.5;">Klik Di Sini Untuk<br>Upload Foto File</span>
                 <img id="prev">
-            </div>
+            </label>
         </div>
         
         <div>
             <p style="font-size: 11px; margin-bottom: 8px; color: var(--primary); font-weight: bold; margin-top: 10px;">02. DETAIL PRODUK (OPSIONAL)</p>
-            <textarea id="dInput" class="input-box" style="height: 100px;" placeholder="Tulis detail sepatu di sini (misal: sepatu putih les hitam)..."></textarea>
+            <textarea id="dInput" class="input-box" style="height: 100px;" placeholder="Tulis deskripsi sepatu di sini (misal: sepatu hitam dengan les putih)..."></textarea>
         </div>
         
         <button class="btn-gen" id="btn" onclick="generate()">🚀 JALANKAN IKLAN</button>
-        <div class="status-box" id="statusInfo">Menggunakan Kunci API: <span>01 / 25</span></div>
+        <div class="status-box" id="statusInfo">Menggunakan Kunci API: <span>01 / 28</span></div>
     </aside>
     
     <main class="main" id="out">
@@ -69,9 +72,7 @@
 
     <script>
         // ==========================================
-        // PAK HANAFIAH: COPY KUMPULAN KUNCI BAPAK DI ATAS
-        // LALU PASTE DI DALAM KURUNG SIKU DI BAWAH INI. 
-        // PASTIKAN SETIAP KUNCI DIAPIT TANDA KUTIP ('...')
+        // MASUKKAN 28 API KEY BAPAK DI SINI
         // ==========================================
         const apiKeys = [
             // 'AIzaSyAK_yHQFz_JCKE-wwYYQHIygmTYePUbwH4','AIzaSyB6Qa53GBXRRE2U8LVsWVXJ5RqUtDVUbCE','AIzaSyDiSIyfHMKIHf1tKhdEVQSfaU6SIihpChY','AIzaSyCsd72jfw7ulgmx_X-Ij_H5ZWc6nBzlgmk','AIzaSyDtRT_cEu5dp0nifcoAtPJ50Z3lDyXxLlY','AIzaSyAylMIUNaSuAauiPIKY2gUmcjJgh9fB350','AIzaSyAf5F4m2e8ITPJInPz3G6WpK-c5BK8zk08','AIzaSyA8KmL762stiDW5FbrYRUwrb-OGG2FJ6p4','AIzaSyCM3575RAXEtOTQXqOtCECWJAi6UR043fA','AIzaSyDMP4xbzx8D6JfOUqO33PGQhw6NoDM0Rm8','AIzaSyD-dc6b9NDklmD2uzlHm4Vgp82xk4afLdo
@@ -84,28 +85,25 @@ AIzaSyDDToIfvQdGGG3DvPij_vmVWqyXLYS7WoY','AIzaSyBjHDOM0iNfUA4Sn1drPLRxc_d8xC_Trn
         let FOTO_DATA = "";
         let FOTO_MIME = "";
 
-        // TANGKAP PASTE DI SELURUH HALAMAN (BABI BUTA)
-        document.addEventListener('paste', function(e) {
-            let items = e.clipboardData.items;
-            for (let i = 0; i < items.length; i++) {
-                if (items[i].type.indexOf("image") !== -1) {
-                    let blob = items[i].getAsFile();
-                    let reader = new FileReader();
-                    reader.onload = function(event) {
-                        document.getElementById('prev').src = event.target.result;
-                        document.getElementById('prev').style.display = 'block';
-                        document.getElementById('labelTxt').style.display = 'none';
-                        FOTO_DATA = event.target.result.split(',')[1];
-                        FOTO_MIME = blob.type;
-                    };
-                    reader.readAsDataURL(blob);
-                    break;
-                }
+        // SISTEM UPLOAD FILE (TIDAK PAKAI PASTE LAGI)
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            let file = e.target.files[0];
+            if (file) {
+                let reader = new FileReader();
+                reader.onload = function(event) {
+                    document.getElementById('prev').src = event.target.result;
+                    document.getElementById('prev').style.display = 'block';
+                    document.getElementById('labelTxt').style.display = 'none';
+                    // Ambil raw base64 data untuk dikirim ke Gemini
+                    FOTO_DATA = event.target.result.split(',')[1];
+                    FOTO_MIME = file.type;
+                };
+                reader.readAsDataURL(file);
             }
         });
 
         async function generate() {
-            if (!FOTO_DATA) return alert("Pak, pastikan fotonya sudah muncul di kotak sebelah kiri. Tekan CTRL+V di mana saja untuk menempelkan foto.");
+            if (!FOTO_DATA) return alert("Pak, silakan klik kotak atas untuk meng-upload foto terlebih dahulu.");
             if (apiKeys.length === 0) return alert("Pak, API Key-nya belum dimasukkan ke dalam kode!");
             
             const btn = document.getElementById('btn');
@@ -117,10 +115,10 @@ AIzaSyDDToIfvQdGGG3DvPij_vmVWqyXLYS7WoY','AIzaSyBjHDOM0iNfUA4Sn1drPLRxc_d8xC_Trn
             out.innerHTML = "<div style='text-align:center; margin-top:150px; color:var(--primary); font-weight:800; animation: pulse 1s infinite;'>MENGHUBUNGI MESIN GEMINI...</div>";
 
             const detail = document.getElementById('dInput').value || "produk di gambar ini";
-            const prompt = `Analyze this exact product image directly. Additional context: ${detail}.
+            const prompt = `Analyze this exact product image very closely. The content MUST be highly tailored to the specific design, color, and vibe of the uploaded image. Additional context: ${detail}.
             Format your response EXACTLY like this:
             [NASKAH]
-            (Write the Instagram Caption here in Indonesian)
+            (Write a catchy Instagram Caption here in Indonesian)
             [UGC]
             (Write 3 concepts for UGC B-Roll video here in Indonesian)
             [KOMERSIAL]
@@ -128,9 +126,7 @@ AIzaSyDDToIfvQdGGG3DvPij_vmVWqyXLYS7WoY','AIzaSyBjHDOM0iNfUA4Sn1drPLRxc_d8xC_Trn
             [GAMBAR]
             1. (English prompt for photorealistic AI generation showing a model wearing this exact product)
             2. (English prompt for AI image...)
-            3. (English prompt for AI image...)
-            4. (English prompt for AI image...)
-            5. (English prompt for AI image...)`;
+            3. (English prompt for AI image...)`;
 
             let success = false;
             let finalData = null;
@@ -172,7 +168,7 @@ AIzaSyDDToIfvQdGGG3DvPij_vmVWqyXLYS7WoY','AIzaSyBjHDOM0iNfUA4Sn1drPLRxc_d8xC_Trn
                 return;
             }
 
-            // MERAKIT TAMPILAN JIKA BERHASIL
+            // MERAKIT TAMPILAN SESUAI SCREENSHOT
             try {
                 const txt = finalData.candidates[0].content.parts[0].text;
                 
@@ -180,23 +176,24 @@ AIzaSyDDToIfvQdGGG3DvPij_vmVWqyXLYS7WoY','AIzaSyBjHDOM0iNfUA4Sn1drPLRxc_d8xC_Trn
                 let ugc = txt.includes('[UGC]') && txt.includes('[KOMERSIAL]') ? txt.substring(txt.indexOf('[UGC]') + 5, txt.indexOf('[KOMERSIAL]')).trim() : "Ide UGC siap.";
                 let komersial = txt.includes('[KOMERSIAL]') && txt.includes('[GAMBAR]') ? txt.substring(txt.indexOf('[KOMERSIAL]') + 11, txt.indexOf('[GAMBAR]')).trim() : "Ide komersial siap.";
                 
-                let pmpts = ["product shot", "lifestyle", "premium studio", "outdoor", "cinematic"];
+                let pmpts = ["model wearing the product, high quality", "lifestyle product photography", "cinematic product shot"];
                 if (txt.includes('[GAMBAR]')) {
                     const gambarTxt = txt.substring(txt.indexOf('[GAMBAR]') + 8);
                     const matches = gambarTxt.match(/\d+\.\s*(.*)/g);
                     if (matches) pmpts = matches.map(p => p.replace(/\d+\.\s*/, '').trim());
                 }
 
+                // FORMAT KARTU NASKAH PERSIS SCREENSHOT (1 KOTAK BESAR)
                 let html = `
                 <div class="copy-card">
-                    <strong>NASKAH IKLAN:</strong><br><br>
-                    ${naskah.replace(/\n/g, '<br>')}
+                    <strong style="margin-bottom:15px;">NASKAH IKLAN:</strong><br>
+                    <div style="margin-bottom: 30px;">${naskah.replace(/\n/g, '<br>')}</div>
                     
-                    <div class="section-title">🎥 B-ROLL UGC:</div>
-                    ${ugc.replace(/\n/g, '<br>')}
+                    <strong style="margin-bottom:15px;">🎥 B-ROLL UGC:</strong><br>
+                    <div style="margin-bottom: 30px;">${ugc.replace(/\n/g, '<br>')}</div>
                     
-                    <div class="section-title">🎬 SKENARIO KOMERSIAL:</div>
-                    ${komersial.replace(/\n/g, '<br>')}
+                    <strong style="margin-bottom:15px;">🎬 SKENARIO KOMERSIAL:</strong><br>
+                    <div>${komersial.replace(/\n/g, '<br>')}</div>
                 </div>
                 <div class="grid-photos">`;
                 
@@ -205,9 +202,10 @@ AIzaSyDDToIfvQdGGG3DvPij_vmVWqyXLYS7WoY','AIzaSyBjHDOM0iNfUA4Sn1drPLRxc_d8xC_Trn
                     const cleanP = encodeURIComponent(p + ", high quality, photorealistic, 8k resolution");
                     const aiUrl = `https://image.pollinations.ai/prompt/${cleanP}?width=800&height=800&nologo=true&seed=${seed}`;
                     
+                    // KOTAK GAMBAR PERSIS SCREENSHOT (Hanya gambar dan tulisan 'Koneksi Terputus' jika gagal)
                     html += `
                     <div class="photo-item">
-                        <span class="loading-text">Menarik Gambar AI ${i+1}...</span>
+                        <span class="loading-text" style="color:#ff6b00; text-transform:none;">Koneksi Terputus</span>
                         <img src="${aiUrl}" onload="this.style.opacity=1" onerror="this.onerror=null; this.src='https://loremflickr.com/800/800/shoes?lock=${seed}';">
                     </div>`;
                 });
