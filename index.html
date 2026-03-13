@@ -22,11 +22,9 @@
         .scrollbar-thin::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 10px; }
         .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
         
-        /* Loading Animation */
         .spinner-icon { animation: spin 1s linear infinite; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
         
-        /* Tab Transition */
         .tab-content { display: none; animation: fadeIn 0.5s; }
         .tab-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -39,7 +37,7 @@
         <div class="flex items-center justify-between p-4 border-b border-zinc-800 bg-zinc-950/50">
             <div>
                 <h1 class="text-lg font-extrabold tracking-tight bg-gradient-to-r from-orange-400 to-rose-500 text-transparent bg-clip-text">CYZIO CONTENT</h1>
-                <p class="text-[10px] font-medium tracking-widest text-zinc-500">ULTRA V.20 PRO</p>
+                <p class="text-[10px] font-medium tracking-widest text-zinc-500">ULTRA V.21 PRO</p>
             </div>
             <div class="flex items-center space-x-3">
                 <div class="text-right hidden sm:block">
@@ -57,21 +55,23 @@
             <section class="space-y-4">
                 <h2 class="text-xs font-bold text-zinc-400 tracking-wider uppercase">1. Produk Utama</h2>
                 
-                <input type="file" id="mainPhotoInput" class="hidden" accept="image/*" />
-                <div id="uploadBox" onclick="document.getElementById('mainPhotoInput').click()" class="border-2 border-dashed border-zinc-700 hover:border-orange-500/50 bg-zinc-950/50 rounded-xl flex flex-col items-center justify-center transition-colors group relative overflow-hidden min-h-[140px] cursor-pointer">
+                <label for="mainPhotoInput" id="uploadBox" class="border-2 border-dashed border-zinc-700 hover:border-orange-500/50 bg-zinc-950/50 rounded-xl flex flex-col items-center justify-center transition-colors group relative overflow-hidden min-h-[140px] cursor-pointer">
                     
-                    <div id="uploadPlaceholder" class="flex flex-col items-center">
+                    <input type="file" id="mainPhotoInput" class="hidden" accept="image/*" onchange="handleFileSelect(this)" />
+                    
+                    <div id="uploadPlaceholder" class="flex flex-col items-center pointer-events-none">
                         <div class="p-3 bg-zinc-800 group-hover:bg-orange-500/20 rounded-full mb-3 transition-colors">
                             <i data-lucide="upload-cloud" class="w-6 h-6 text-zinc-400 group-hover:text-orange-400"></i>
                         </div>
                         <p class="text-sm font-medium text-zinc-300">Upload Foto Produk</p>
                     </div>
 
-                    <img id="mainPhotoPreview" class="w-full h-full object-cover absolute inset-0 hidden" />
-                    <button id="removePhotoBtn" onclick="removePhoto(event)" class="hidden absolute top-2 right-2 p-1.5 bg-black/60 hover:bg-red-500/80 text-white rounded-lg backdrop-blur-md transition-colors z-10">
+                    <img id="mainPhotoPreview" class="w-full h-full object-cover absolute inset-0 hidden pointer-events-none" />
+                    
+                    <button id="removePhotoBtn" onclick="removePhoto(event)" class="hidden absolute top-2 right-2 p-1.5 bg-black/60 hover:bg-red-500/80 text-white rounded-lg backdrop-blur-md transition-colors z-20">
                         <i data-lucide="x" class="w-3.5 h-3.5"></i>
                     </button>
-                </div>
+                </label>
 
                 <textarea id="descInput" placeholder="Deskripsi produk (Warna, Bahan, Kegunaan)..." class="w-full h-24 bg-zinc-950 border border-zinc-700 rounded-xl p-3 text-sm text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 resize-none transition-all"></textarea>
             </section>
@@ -202,11 +202,11 @@
     </main>
 
     <script>
-        // Inisialisasi Icons
+        // Inisialisasi Icons Pertama Kali
         lucide.createIcons();
 
         // ==========================================
-        // MASUKKAN 25+ KUNCI API BAPAK DI SINI
+        // MASUKKAN KUNCI API BAPAK DI SINI
         // ==========================================
         const apiKeys = [
             // 'AIzaSyAK_yHQFz_JCKE-wwYYQHIygmTYePUbwH4','AIzaSyB6Qa53GBXRRE2U8LVsWVXJ5RqUtDVUbCE','AIzaSyDiSIyfHMKIHf1tKhdEVQSfaU6SIihpChY','AIzaSyCsd72jfw7ulgmx_X-Ij_H5ZWc6nBzlgmk','AIzaSyDtRT_cEu5dp0nifcoAtPJ50Z3lDyXxLlY','AIzaSyAylMIUNaSuAauiPIKY2gUmcjJgh9fB350','AIzaSyAf5F4m2e8ITPJInPz3G6WpK-c5BK8zk08','AIzaSyA8KmL762stiDW5FbrYRUwrb-OGG2FJ6p4','AIzaSyCM3575RAXEtOTQXqOtCECWJAi6UR043fA','AIzaSyDMP4xbzx8D6JfOUqO33PGQhw6NoDM0Rm8','AIzaSyD-dc6b9NDklmD2uzlHm4Vgp82xk4afLdo
@@ -219,30 +219,34 @@ AIzaSyDDToIfvQdGGG3DvPij_vmVWqyXLYS7WoY','AIzaSyBjHDOM0iNfUA4Sn1drPLRxc_d8xC_Trn
         let FOTO_DATA = null;
         let FOTO_MIME = null;
 
-        // FUNGSI UPLOAD FOTO (ANTI-GAGAL)
-        const fileInput = document.getElementById('mainPhotoInput');
-        fileInput.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
+        // FUNGSI UPLOAD FOTO (MURNI HTML - DIJAMIN JALAN)
+        function handleFileSelect(input) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
                 const reader = new FileReader();
-                reader.onload = function(event) {
-                    document.getElementById('mainPhotoPreview').src = event.target.result;
+                reader.onload = function(e) {
+                    document.getElementById('mainPhotoPreview').src = e.target.result;
                     document.getElementById('mainPhotoPreview').classList.remove('hidden');
                     document.getElementById('removePhotoBtn').classList.remove('hidden');
                     document.getElementById('uploadPlaceholder').classList.add('hidden');
                     document.getElementById('uploadBox').classList.remove('border-dashed');
                     
-                    FOTO_DATA = event.target.result.split(',')[1];
+                    FOTO_DATA = e.target.result.split(',')[1];
                     FOTO_MIME = file.type;
                 };
                 reader.readAsDataURL(file);
             }
-        });
+        }
 
+        // FUNGSI HAPUS FOTO
         function removePhoto(e) {
+            e.preventDefault(); // Mencegah klik label tertrigger
             e.stopPropagation();
-            fileInput.value = '';
+            
+            document.getElementById('mainPhotoInput').value = '';
             FOTO_DATA = null;
+            FOTO_MIME = null;
+            
             document.getElementById('mainPhotoPreview').classList.add('hidden');
             document.getElementById('removePhotoBtn').classList.add('hidden');
             document.getElementById('uploadPlaceholder').classList.remove('hidden');
@@ -266,7 +270,7 @@ AIzaSyDDToIfvQdGGG3DvPij_vmVWqyXLYS7WoY','AIzaSyBjHDOM0iNfUA4Sn1drPLRxc_d8xC_Trn
 
         // FUNGSI UTAMA GENERATE DARI GEMINI
         async function generateContent() {
-            if (!FOTO_DATA) return alert("Pak, tolong upload foto produknya dulu.");
+            if (!FOTO_DATA) return alert("Pak, tolong klik kotak dan upload foto produknya dulu.");
             if (apiKeys.length === 0) return alert("Pak, Kunci API belum dimasukkan ke dalam kode GitHub.");
 
             const btn = document.getElementById('generateBtn');
@@ -283,16 +287,16 @@ AIzaSyDDToIfvQdGGG3DvPij_vmVWqyXLYS7WoY','AIzaSyBjHDOM0iNfUA4Sn1drPLRxc_d8xC_Trn
             btnIcon.classList.add('spinner-icon');
             lucide.createIcons();
 
-            // AMBIL DATA DARI FORM REACT BAPAK
+            // AMBIL DATA DARI FORM
             const desc = document.getElementById('descInput').value || "Produk ini";
             const gender = document.getElementById('genderInput').value;
             const age = document.getElementById('ageInput').value;
             const type = document.getElementById('typeInput').value;
             const lang = document.getElementById('langInput').value;
 
-            // PROMPT DINAMIS SESUAI INPUT FORM
+            // PROMPT DINAMIS
             const prompt = `Analyze this exact product image directly. Context: ${desc}. Target Audience: ${gender}, ${age}. Ad Type: ${type}. Language: ${lang}.
-            Format your response EXACTLY like this (do not use markdown blocks for the main tags):
+            Format your response EXACTLY like this:
             [NASKAH]
             (Write the Caption here)
             [UGC]
@@ -308,7 +312,7 @@ AIzaSyDDToIfvQdGGG3DvPij_vmVWqyXLYS7WoY','AIzaSyBjHDOM0iNfUA4Sn1drPLRxc_d8xC_Trn
             let success = false;
             let finalData = null;
 
-            // ROTASI KUNCI (MENCEGAH ERROR MUTER-MUTER)
+            // ROTASI KUNCI (MENCEGAH ERROR LIMIT 0)
             for (let i = 0; i < apiKeys.length; i++) {
                 const currentKey = apiKeys[currentKeyIndex];
                 keyStatus.innerText = `Status: Mengetuk Pintu | Key: ${currentKeyIndex + 1}/${apiKeys.length}`;
@@ -346,7 +350,7 @@ AIzaSyDDToIfvQdGGG3DvPij_vmVWqyXLYS7WoY','AIzaSyBjHDOM0iNfUA4Sn1drPLRxc_d8xC_Trn
             lucide.createIcons();
 
             if (!success) {
-                alert("Semua API Key gagal menembus Google (Limit/Error). Silakan coba lagi nanti.");
+                alert("Semua API Key gagal menembus Google (Limit/Error). Silakan pastikan Kunci API valid.");
                 keyStatus.innerText = "Status: GAGAL | Semua Key Limit";
                 return;
             }
